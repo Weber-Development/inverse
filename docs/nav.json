@@ -1,0 +1,26 @@
+{
+  "sections": [
+    {
+      "label": "Start",
+      "items": ["introduction", "getting-started"]
+    },
+    {
+      "label": "Guides",
+      "items": [
+        "guides/withdrawal",
+        "guides/cancellation",
+        "guides/react",
+        "guides/other-frameworks",
+        "guides/check"
+      ]
+    },
+    {
+      "label": "Reference",
+      "items": ["reference/legal", "reference/handler", "reference/api"]
+    },
+    {
+      "label": "Pro",
+      "items": ["pro/overview", "pro/ledger", "pro/audit", "pro/mail"]
+    }
+  ]
+}
