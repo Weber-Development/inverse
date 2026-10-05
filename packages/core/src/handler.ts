@@ -1,0 +1,178 @@
+import { isLocale } from "./i18n";
+import { renderReceipt } from "./receipt";
+import { createRecord, declarationText } from "./record";
+import type {
+  Company,
+  DeclarationKind,
+  DeclarationRecord,
+  Locale,
+  Receipt,
+  ValidationError,
+} from "./types";
+import { validate } from "./validate";
+
+export interface HandlerOptions {
+  /** The trader, shown in the receipt. */
+  company: Company;
+  /** Which flows this endpoint accepts. Defaults to both. */
+  kinds?: DeclarationKind[];
+  /** Fallback language when the request does not send one. Defaults to `de`. */
+  locale?: Locale;
+  /** IANA time zone for dates in the receipt. Defaults to Europe/Berlin. */
+  timeZone?: string;
+  /**
+   * Store the declaration. Called before the receipt is sent; if it throws, the consumer
+   * gets an error and can try again, so nothing is lost silently.
+   */
+  onDeclaration: (record: DeclarationRecord) => void | Promise<void>;
+  /** Send the receipt, e.g. with Resend, Postmark, SES or nodemailer. */
+  sendReceipt: (receipt: Receipt, record: DeclarationRecord) => void | Promise<void>;
+  /** Cancellation only: work out the end date to put into the receipt. */
+  resolveEndDate?: (
+    record: DeclarationRecord<"cancellation">,
+  ) => string | undefined | Promise<string | undefined>;
+  /** Called when storing or sending fails. Defaults to `console.error`. */
+  onError?: (error: unknown, record?: DeclarationRecord) => void;
+}
+
+export interface HandlerSuccess {
+  ok: true;
+  id: string;
+  kind: DeclarationKind;
+  receivedAt: string;
+  endsAt?: string;
+  /** Plain-text copy the consumer can download (§ 312k Abs. 4 BGB). */
+  copy: string;
+}
+
+export interface HandlerFailure {
+  ok: false;
+  error: "invalid" | "kind" | "method" | "server";
+  errors?: ValidationError[];
+}
+
+export type HandlerResult = HandlerSuccess | HandlerFailure;
+
+/** Field name of the hidden honeypot input the React components render. */
+export const HONEYPOT_FIELD = "inverse_hp";
+
+async function readBody(request: Request): Promise<Record<string, unknown>> {
+  const type = request.headers.get("content-type") ?? "";
+  if (type.includes("application/json")) {
+    const body = await request.json().catch(() => ({}));
+    return body && typeof body === "object" ? (body as Record<string, unknown>) : {};
+  }
+  const form = await request.formData().catch(() => undefined);
+  if (!form) return {};
+  const out: Record<string, unknown> = {};
+  for (const [key, value] of form.entries()) {
+    if (typeof value !== "string") continue;
+    if (key === "items") {
+      const items = (out.items as string[] | undefined) ?? [];
+      items.push(value);
+      out.items = items;
+    } else {
+      out[key] = value;
+    }
+  }
+  return out;
+}
+
+/**
+ * Processes one submitted declaration: validates it, stamps the time of receipt on the
+ * server, stores it, sends the receipt and returns a copy for the consumer.
+ * Framework-independent; use {@link createInverseHandler} for a `Request → Response` route.
+ */
+export async function handleDeclaration(
+  body: Record<string, unknown>,
+  options: HandlerOptions,
+): Promise<HandlerResult> {
+  const kinds = options.kinds ?? ["withdrawal", "cancellation"];
+  const kind = body.kind as DeclarationKind;
+  if (!kinds.includes(kind)) return { ok: false, error: "kind" };
+
+  const locale = isLocale(body.locale) ? body.locale : (options.locale ?? "de");
+
+  // Bots fill every field. Pretend success so they move on, but store nothing.
+  if (typeof body[HONEYPOT_FIELD] === "string" && body[HONEYPOT_FIELD] !== "") {
+    return {
+      ok: true,
+      id: "-",
+      kind,
+      receivedAt: new Date().toISOString(),
+      copy: "",
+    };
+  }
+
+  const result = validate(kind, body.data ?? body);
+  if (!result.ok) return { ok: false, error: "invalid", errors: result.errors };
+
+  const record = createRecord(kind, result.value, { locale }) as DeclarationRecord;
+  const onError = options.onError ?? ((e: unknown) => console.error("[inverse]", e));
+
+  try {
+    if (kind === "cancellation" && options.resolveEndDate) {
+      const endsAt = await options.resolveEndDate(record as DeclarationRecord<"cancellation">);
+      if (endsAt) record.endsAt = endsAt;
+    }
+    await options.onDeclaration(record);
+  } catch (error) {
+    onError(error, record);
+    return { ok: false, error: "server" };
+  }
+
+  try {
+    const receipt = renderReceipt(record, {
+      company: options.company,
+      timeZone: options.timeZone,
+    });
+    await options.sendReceipt(receipt, record);
+  } catch (error) {
+    // The declaration is stored and legally received; a failed e-mail must not hide that.
+    onError(error, record);
+  }
+
+  const success: HandlerSuccess = {
+    ok: true,
+    id: record.id,
+    kind,
+    receivedAt: record.receivedAt,
+    copy: declarationText(record, { company: options.company, timeZone: options.timeZone }),
+  };
+  if (record.endsAt) success.endsAt = record.endsAt;
+  return success;
+}
+
+const STATUS: Record<HandlerFailure["error"], number> = {
+  invalid: 422,
+  kind: 400,
+  method: 405,
+  server: 500,
+};
+
+/**
+ * A `Request → Response` handler for Next.js route handlers, Remix, Hono, SvelteKit,
+ * Astro or any runtime with the Fetch API.
+ *
+ * ```ts
+ * // app/api/inverse/route.ts
+ * export const POST = createInverseHandler({ company, onDeclaration, sendReceipt });
+ * ```
+ */
+export function createInverseHandler(
+  options: HandlerOptions,
+): (request: Request) => Promise<Response> {
+  return async (request) => {
+    if (request.method !== "POST") {
+      return Response.json({ ok: false, error: "method" } satisfies HandlerFailure, {
+        status: 405,
+        headers: { allow: "POST" },
+      });
+    }
+    const result = await handleDeclaration(await readBody(request), options);
+    return Response.json(result, {
+      status: result.ok ? 200 : STATUS[result.error],
+      headers: { "cache-control": "no-store" },
+    });
+  };
+}
