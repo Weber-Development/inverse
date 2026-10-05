@@ -12,6 +12,18 @@ export interface DeclarationFlowProps extends UseDeclarationFlowOptions {
   intro?: ReactNode;
   /** File name of the downloadable copy. */
   downloadName?: string;
+  /**
+   * Contracts of a signed-in customer. Renders a select instead of the free-text contract
+   * field. Logging in must stay optional: keep the free-text form for everyone else.
+   */
+  contracts?: ContractOption[];
+}
+
+export interface ContractOption {
+  /** Sent as `contractRef`, e.g. the order or customer number. */
+  value: string;
+  /** Shown in the select, e.g. "Premium plan, order 1042". */
+  label: string;
 }
 
 function download(text: string, name: string) {
@@ -29,7 +41,12 @@ function download(text: string, name: string) {
  * Unstyled: every element has an `inverse-*` class.
  */
 export function DeclarationFlow(props: DeclarationFlowProps) {
-  const flow = useDeclarationFlow(props);
+  const only = props.contracts?.length === 1 ? props.contracts[0]?.value : undefined;
+  const flow = useDeclarationFlow(
+    only && !props.defaultValues?.contractRef
+      ? { ...props, defaultValues: { ...props.defaultValues, contractRef: only } }
+      : props,
+  );
   const { kind, messages: m, step, values, setValue, errorFor } = flow;
   const t = kind === "withdrawal" ? m.withdrawal : m.cancellation;
   const id = useId();
@@ -102,6 +119,35 @@ export function DeclarationFlow(props: DeclarationFlowProps) {
     );
   };
 
+  const contractSelect = (contracts: ContractOption[]) => {
+    const err = errorFor("contractRef");
+    return (
+      <div className="inverse-field" data-invalid={err ? "" : undefined}>
+        <label htmlFor={`${id}-contractRef`}>{m.fields.contractRef}</label>
+        <select
+          id={`${id}-contractRef`}
+          name="contractRef"
+          value={values.contractRef}
+          onChange={(e) => setValue("contractRef", e.target.value)}
+          aria-invalid={err ? true : undefined}
+          aria-describedby={err ? `${id}-contractRef-error` : undefined}
+        >
+          {contracts.length > 1 && <option value="">–</option>}
+          {contracts.map((c) => (
+            <option key={c.value} value={c.value}>
+              {c.label}
+            </option>
+          ))}
+        </select>
+        {err && (
+          <p className="inverse-error" id={`${id}-contractRef-error`}>
+            {err}
+          </p>
+        )}
+      </div>
+    );
+  };
+
   const className = ["inverse-flow", props.className].filter(Boolean).join(" ");
 
   if (step === "done" && flow.result) {
@@ -148,7 +194,9 @@ export function DeclarationFlow(props: DeclarationFlowProps) {
           {props.intro ?? <p className="inverse-text">{t.intro}</p>}
           {input("name", m.fields.name, "text", "name")}
           {input("email", m.fields.email, "email", "email")}
-          {input("contractRef", m.fields.contractRef)}
+          {props.contracts?.length
+            ? contractSelect(props.contracts)
+            : input("contractRef", m.fields.contractRef)}
           {kind === "withdrawal" && props.showItems && textarea("items", m.fields.items)}
           {kind === "cancellation" && (
             <>

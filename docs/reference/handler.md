@@ -17,6 +17,15 @@ import { createInverseHandler, type HandlerOptions } from "@sweberdev/inverse";
 | `timeZone` | IANA zone | dates in receipts, default `Europe/Berlin` |
 | `resolveEndDate` | `(record) => string \| undefined` | cancellation: end date for the receipt |
 | `onError` | `(error, record?) => void` | default `console.error` |
+| `rateLimit` | `{ max, windowMs?, key? }` | limit requests per client, answers 429 with `retry-after`; off by default |
+
+## Rate limit
+
+```ts
+createInverseHandler({ ...options, rateLimit: { max: 5, windowMs: 10 * 60_000 } });
+```
+
+The counter lives in memory per server instance and uses the first `x-forwarded-for` address as key (then `x-real-ip`). On serverless platforms each instance counts on its own, so treat it as protection against scripts, not as an exact quota. Pass `key` to count by something else, for example a session ID. Keep `max` generous: a consumer who tries twice must never be blocked from withdrawing.
 
 ## Order of operations
 

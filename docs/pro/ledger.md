@@ -52,7 +52,7 @@ sheet.json; // the same as data
 
 ```sh
 npx inverse-ledger evidence ./data/inverse.jsonl W-7K3QX9PD > W-7K3QX9PD.txt
-npx inverse-ledger export ./data/inverse.jsonl --from 2026-06-19 --csv > declarations.csv
+npx inverse-ledger export ./data/inverse.jsonl --from 2026-06-19 > declarations.csv
 ```
 
 ## Erasure
@@ -62,3 +62,20 @@ Personal data must not be kept longer than needed. `ledger.redact(id, { reason }
 ```ts
 await ledger.redact("W-7K3QX9PD", { reason: "retention period ended" });
 ```
+
+## Retention
+
+Set a retention period once and run it on a schedule instead of redacting by hand. `retain` redacts every declaration received more than `days` days ago, together with its receipts, and logs one redaction entry per declaration:
+
+```ts
+const { refs, entries } = await ledger.retain({ days: 3 * 365 });
+await ledger.retain({ days: 3 * 365, dryRun: true }); // only list what would go
+```
+
+```sh
+npx inverse-ledger retain ./data/inverse.jsonl --days 1095 --dry-run
+npx inverse-ledger retain ./data/inverse.jsonl --days 1095
+```
+
+How long you keep declarations is your decision; three years (the regular limitation period, § 195 BGB) is a common choice. The chain still verifies after a retention run.
+

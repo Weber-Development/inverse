@@ -97,3 +97,18 @@ describe("CancellationForm", () => {
     expect(screen.getByText("Earliest possible date")).toBeTruthy();
   });
 });
+
+describe("contracts", () => {
+  it("renders a select for signed-in customers and preselects a single contract", () => {
+    render(
+      <CancellationForm
+        endpoint="/api/inverse"
+        locale="en"
+        contracts={[{ value: "1042", label: "Premium plan, order 1042" }]}
+      />,
+    );
+    const select = screen.getByRole("combobox") as HTMLSelectElement;
+    expect(select.value).toBe("1042");
+    expect(screen.getByRole("option", { name: "Premium plan, order 1042" })).toBeTruthy();
+  });
+});

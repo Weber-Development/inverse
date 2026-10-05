@@ -89,6 +89,30 @@ export function isWithinWithdrawalPeriod(
   return day <= withdrawalDeadline(options);
 }
 
+export interface WithdrawalStatus {
+  /** Last day of the period, `YYYY-MM-DD`. */
+  deadline: string;
+  /** Whether a withdrawal is still possible on `at`. */
+  open: boolean;
+  /** Calendar days left including today, 0 once the period is over. */
+  daysLeft: number;
+}
+
+/**
+ * Everything a page needs to show "You can withdraw until …": the deadline, whether it is
+ * still open and how many days are left.
+ */
+export function withdrawalStatus(
+  options: WithdrawalPeriodOptions & { at?: Date; timeZone?: string },
+): WithdrawalStatus {
+  const deadline = withdrawalDeadline(options);
+  const today = toIsoDate(options.at ?? new Date(), options.timeZone);
+  const diff = Math.round(
+    (Date.parse(`${deadline}T00:00:00Z`) - Date.parse(`${today}T00:00:00Z`)) / 86_400_000,
+  );
+  return { deadline, open: diff >= 0, daysLeft: Math.max(0, diff + 1) };
+}
+
 export interface ContractEndOptions {
   /** Date the cancellation was received. */
   received: string;
