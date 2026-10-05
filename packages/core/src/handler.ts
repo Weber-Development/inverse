@@ -33,6 +33,20 @@ export interface HandlerOptions {
   ) => string | undefined | Promise<string | undefined>;
   /** Called when storing or sending fails. Defaults to `console.error`. */
   onError?: (error: unknown, record?: DeclarationRecord) => void;
+  /**
+   * Limit submissions per client, kept in memory per server instance. Answers with 429
+   * once `max` requests arrived within `windowMs`. Off by default.
+   */
+  rateLimit?: RateLimitOptions;
+}
+
+export interface RateLimitOptions {
+  /** Requests allowed per window. */
+  max: number;
+  /** Window length in milliseconds. Defaults to 10 minutes. */
+  windowMs?: number;
+  /** Client key. Defaults to the first `x-forwarded-for` address, then `x-real-ip`. */
+  key?: (request: Request) => string;
 }
 
 export interface HandlerSuccess {
@@ -47,7 +61,7 @@ export interface HandlerSuccess {
 
 export interface HandlerFailure {
   ok: false;
-  error: "invalid" | "kind" | "method" | "server";
+  error: "invalid" | "kind" | "method" | "rate" | "server";
   errors?: ValidationError[];
 }
 
@@ -147,6 +161,7 @@ const STATUS: Record<HandlerFailure["error"], number> = {
   invalid: 422,
   kind: 400,
   method: 405,
+  rate: 429,
   server: 500,
 };
 
@@ -162,6 +177,7 @@ const STATUS: Record<HandlerFailure["error"], number> = {
 export function createInverseHandler(
   options: HandlerOptions,
 ): (request: Request) => Promise<Response> {
+  const limited = options.rateLimit ? createRateLimiter(options.rateLimit) : undefined;
   return async (request) => {
     if (request.method !== "POST") {
       return Response.json({ ok: false, error: "method" } satisfies HandlerFailure, {
@@ -169,10 +185,43 @@ export function createInverseHandler(
         headers: { allow: "POST" },
       });
     }
+    const retryAfter = limited?.(request);
+    if (retryAfter) {
+      return Response.json({ ok: false, error: "rate" } satisfies HandlerFailure, {
+        status: 429,
+        headers: { "retry-after": String(retryAfter), "cache-control": "no-store" },
+      });
+    }
     const result = await handleDeclaration(await readBody(request), options);
     return Response.json(result, {
       status: result.ok ? 200 : STATUS[result.error],
       headers: { "cache-control": "no-store" },
     });
+  };
+}
+
+function clientKey(request: Request): string {
+  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return forwarded || request.headers.get("x-real-ip") || "unknown";
+}
+
+/** Fixed-window counter. Returns the seconds to wait when the client is over the limit. */
+function createRateLimiter(options: RateLimitOptions): (request: Request) => number | undefined {
+  const windowMs = options.windowMs ?? 10 * 60_000;
+  const key = options.key ?? clientKey;
+  const hits = new Map<string, { count: number; reset: number }>();
+  return (request) => {
+    const now = Date.now();
+    if (hits.size > 10_000) {
+      for (const [k, v] of hits) if (v.reset <= now) hits.delete(k);
+    }
+    const id = key(request);
+    let entry = hits.get(id);
+    if (!entry || entry.reset <= now) {
+      entry = { count: 0, reset: now + windowMs };
+      hits.set(id, entry);
+    }
+    entry.count++;
+    return entry.count > options.max ? Math.ceil((entry.reset - now) / 1000) : undefined;
   };
 }

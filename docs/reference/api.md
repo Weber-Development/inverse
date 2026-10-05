@@ -20,13 +20,16 @@ description: All exports of @sweberdev/inverse.
 
 - `withdrawalDeadline({ start, informed?, isHoliday? })`: last day of the withdrawal period
 - `isWithinWithdrawalPeriod({ start, at?, timeZone?, informed?, isHoliday? })`
+- `withdrawalStatus({ start, at?, timeZone?, informed?, isHoliday? })`: `{ deadline, open, daysLeft }`
 - `contractEndDate({ received, notice, termEnd?, requested? })`
 - `addPeriod(date, { days?, weeks?, months? })`, `nextWorkingDay(date, isHoliday?)`, `toIsoDate(date, timeZone?)`
 
 ## Handler
 
 - `createInverseHandler(options)`: `(request: Request) => Promise<Response>`
-- `handleDeclaration(body, options)`: same logic for frameworks without Fetch API
+- `createNodeHandler(options)`: `(req, res) => Promise<void>` for Express, Fastify, `node:http` and the Pages Router
+- `toWebRequest(req)`: Node request to Fetch API `Request`
+- `handleDeclaration(body, options)`: same logic, returns the result object
 - `HONEYPOT_FIELD`
 
 ## Texts

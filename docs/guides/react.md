@@ -26,12 +26,25 @@ Pass `children` only if you are sure the wording is equivalent. The statutory wo
 | `endpoint` | URL of your `createInverseHandler` route |
 | `locale` | `de` (default), `en`, `fr`, `it` |
 | `defaultValues` | prefill `name`, `email`, `contractRef` and others |
+| `contracts` | `{ value, label }[]` of a signed-in customer: a select instead of the free-text contract field |
 | `showItems` | withdrawal: field for a partial withdrawal |
 | `showMessage` | optional free-text message |
 | `intro` | replaces the intro text |
 | `messages` | override single texts, e.g. `{ withdrawal: { intro: "…" } }` |
 | `onSuccess` | called with `{ id, receivedAt, copy, endsAt? }` |
 | `submit` | replace the `fetch` call, e.g. for tests |
+
+For signed-in customers, pass their contracts. A single contract is preselected:
+
+```tsx
+<CancellationForm
+  endpoint="/api/inverse"
+  defaultValues={{ name: user.name, email: user.email }}
+  contracts={user.subscriptions.map((s) => ({ value: s.id, label: `${s.plan}, ${s.id}` }))}
+/>
+```
+
+Logging in must stay optional: the button has to work without an account, so render the free-text form for everyone else.
 
 The flow has three steps: details, review with the statutory confirm button, and the receipt with a download. Focus moves to the heading on every step and errors are linked to their fields with `aria-describedby`.
 

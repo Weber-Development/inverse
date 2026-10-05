@@ -51,4 +51,13 @@ withdrawalDeadline({ start: "2026-10-05", informed: false }); // "2027-10-19"
 
 `start` is the day the contract was concluded or, for goods, the day the consumer received them. The day itself is not counted (§ 187 BGB), weekends move the end to Monday (§ 193 BGB), and you can pass `isHoliday` for public holidays. Without proper information about the right of withdrawal the period ends 12 months later.
 
+To show the remaining time, for example in the order overview:
+
+```ts
+import { withdrawalStatus } from "@sweberdev/inverse";
+
+const { deadline, open, daysLeft } = withdrawalStatus({ start: order.deliveredAt });
+// open: "You can withdraw until 19.10.2026 (8 days left)."
+```
+
 Don't hide the button once the period has ended: you usually don't know the exact delivery date per consumer, and declarations that arrive late are easy to answer.

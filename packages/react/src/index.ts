@@ -1,5 +1,6 @@
 export {
   CancellationForm,
+  type ContractOption,
   DeclarationFlow,
   type DeclarationFlowProps,
   WithdrawalForm,

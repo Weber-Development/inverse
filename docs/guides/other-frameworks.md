@@ -19,14 +19,22 @@ export const POST = ({ request }) => inverse(request);
 export const POST: APIRoute = ({ request }) => inverse(request);
 ```
 
-For Express or Fastify, call `handleDeclaration(body, options)` directly. It takes the parsed body and returns the same result object:
+For Express, Fastify, `node:http` and API routes of the Next.js Pages Router, use `createNodeHandler`. It takes the same options, reads a body that is already parsed (`express.json()`) or the raw stream, and writes status, headers and JSON:
 
 ```ts
-app.post("/api/inverse", express.json(), async (req, res) => {
-  const result = await handleDeclaration(req.body, options);
-  res.status(result.ok ? 200 : result.error === "invalid" ? 422 : 400).json(result);
-});
+import { createNodeHandler } from "@sweberdev/inverse";
+
+// Express
+app.post("/api/inverse", express.json(), createNodeHandler(options));
+
+// Fastify
+fastify.post("/api/inverse", (req, reply) => createNodeHandler(options)(req.raw, reply.raw));
+
+// Next.js Pages Router: pages/api/inverse.ts
+export default createNodeHandler(options);
 ```
+
+`handleDeclaration(body, options)` stays available if you want to write the response yourself.
 
 ## Without JavaScript
 
