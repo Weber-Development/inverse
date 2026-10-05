@@ -28,16 +28,35 @@ npx inverse-audit --sites sites.txt --html-dir reports/
 | `--html`, `--json` | report files |
 | `--sites`, `--html-dir` | many sites, one report each |
 | `--warn-ok` | exit 0 on warnings |
+| `--baseline` | compare with an earlier `--json` report; exits 1 only if something got worse |
+
+## Monitoring changes
+
+Run the audit on a schedule and compare it with the last run. A theme update that drops the footer link or a new login wall in front of the cancellation page shows up as a regression:
+
+```sh
+npx inverse-audit https://shop.example.com --baseline last.json --json today.json && mv today.json last.json
+```
+
+```
+   ▼ page cancellation https://shop.example.com/: pass → fail
+   ▲ page withdrawal https://shop.example.com/agb: warn → pass
+```
+
+With `--baseline` the exit code only reflects regressions, so the job stays green while known warnings are being worked on. New pages that fail count as regressions. `--sites` works too: the baseline file is then the JSON array of the previous run.
 
 ## In code
 
 ```ts
-import { auditSite, renderHtmlReport } from "@weber-development/inverse-audit";
+import { auditSite, compareReports, renderHtmlReport } from "@weber-development/inverse-audit";
 
 const report = await auditSite("https://shop.example.com", { kinds: ["withdrawal"], maxPages: 100 });
 report.verdict; // "pass" | "warn" | "fail"
 report.summary; // { pages, pass, warn, fail, targets: [...] }
 await writeFile("report.html", renderHtmlReport(report, { lang: "de" }));
+
+const diff = compareReports(lastReport, report);
+diff.regressions; // [{ scope: "page", kind: "cancellation", url, before: "pass", after: "fail" }]
 ```
 
 The report is available in German and English.
