@@ -134,3 +134,46 @@ describe("dedupe", () => {
     expect(stored).toHaveLength(2);
   });
 });
+
+describe("cors", () => {
+  const handler = (origin: string | string[]) => {
+    const { options: o } = options({ cors: { origin } });
+    return createInverseHandler(o);
+  };
+
+  it("answers the preflight request for an allowed origin", async () => {
+    const res = await handler(["https://shop.example"])(
+      new Request("https://api.test/inverse", {
+        method: "OPTIONS",
+        headers: { origin: "https://shop.example" },
+      }),
+    );
+    expect(res.status).toBe(204);
+    expect(res.headers.get("access-control-allow-origin")).toBe("https://shop.example");
+    expect(res.headers.get("access-control-allow-methods")).toContain("POST");
+  });
+
+  it("adds the headers to results and leaves other origins without them", async () => {
+    const post = (origin: string) =>
+      handler(["https://shop.example"])(
+        new Request("https://api.test/inverse", {
+          method: "POST",
+          headers: { "content-type": "application/json", origin },
+          body: JSON.stringify({ kind: "withdrawal", data }),
+        }),
+      );
+    expect((await post("https://shop.example")).headers.get("access-control-allow-origin")).toBe(
+      "https://shop.example",
+    );
+    expect((await post("https://evil.example")).headers.get("access-control-allow-origin")).toBe(
+      null,
+    );
+  });
+
+  it("is off by default", async () => {
+    const res = await createInverseHandler(options().options)(
+      new Request("https://api.test/inverse", { method: "OPTIONS" }),
+    );
+    expect(res.status).toBe(405);
+  });
+});

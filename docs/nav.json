@@ -2,7 +2,10 @@
   "sections": [
     {
       "label": "Start",
-      "items": ["introduction", "getting-started"]
+      "items": [
+        "introduction",
+        "getting-started"
+      ]
     },
     {
       "label": "Guides",
@@ -17,11 +20,21 @@
     },
     {
       "label": "Reference",
-      "items": ["reference/legal", "reference/handler", "reference/api"]
+      "items": [
+        "reference/legal",
+        "reference/legal-status",
+        "reference/handler",
+        "reference/api"
+      ]
     },
     {
       "label": "Pro",
-      "items": ["pro/overview", "pro/ledger", "pro/audit", "pro/mail"]
+      "items": [
+        "pro/overview",
+        "pro/ledger",
+        "pro/audit",
+        "pro/mail"
+      ]
     }
   ]
 }
