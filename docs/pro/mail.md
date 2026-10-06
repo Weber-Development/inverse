@@ -32,6 +32,31 @@ With `team`, your team gets a separate e-mail for every declaration, with what t
 - **Withdrawal**: refund due at the latest 14 days after receipt (§ 357 BGB), with the date.
 - **Cancellation**: the end date, or a reminder that the consumer still needs one.
 
+## Team digest
+
+One e-mail a week (or a day) with everything that needs doing, built from the records you already store. It lists refunds that are due after a withdrawal (14 days after receipt, § 357 BGB), contracts that end within the next two weeks, cancellations whose end date you have not sent yet, and all declarations received in the period.
+
+```ts
+import { teamDigest } from "@weber-development/inverse-mail";
+
+// e.g. a cron job every Monday at 7:00
+const records = (await ledger.entries())
+  .filter((e) => e.type === "declaration" && e.payload !== null)
+  .map((e) => e.payload);
+const digest = teamDigest(records, { locale: "de", days: 7, upcomingDays: 14 });
+await transport.send({ from: "service@acme.de", to: "team@acme.de", ...digest });
+```
+
+| Option | |
+|---|---|
+| `days` | declarations received in this many days are listed as new (default 7) |
+| `upcomingDays` | refunds and contract ends within this many days are listed as due (default 14) |
+| `refundDays` | days after receipt a refund is due (default 14) |
+| `locale` | `de` (default) or `en` |
+| `now` | reference time, e.g. in tests |
+
+`dueItems(records, options)` returns the due list as data (`{ kind, record, date, daysLeft }`) if you want to show it in your back office instead.
+
 ## Transports
 
 `resend`, `postmark`, `sendgrid`, `brevo` and `mailgun` use the providers' HTTP APIs with `fetch`, no SDK needed. `nodemailer(transporter)` wraps an existing nodemailer transport for SMTP. Any object with `send({ from?, to, bcc?, replyTo?, subject, text, html })` works too.

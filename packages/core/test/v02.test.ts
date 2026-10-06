@@ -113,3 +113,24 @@ describe("createNodeHandler", () => {
     expect(res.statusCode).toBe(405);
   });
 });
+
+describe("dedupe", () => {
+  it("answers a repeated declaration with the first result", async () => {
+    const { options: o, stored } = options({ dedupe: { windowMs: 60_000 } });
+    const handler = createInverseHandler(o);
+    const post = (email: string) =>
+      handler(
+        new Request("https://shop.test/api/inverse", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ kind: "withdrawal", data: { ...data, email } }),
+        }),
+      ).then((r) => r.json());
+    const first = await post("erika@example.com");
+    const again = await post("Erika@Example.com");
+    const other = await post("max@example.com");
+    expect(again.id).toBe(first.id);
+    expect(other.id).not.toBe(first.id);
+    expect(stored).toHaveLength(2);
+  });
+});
