@@ -1,5 +1,11 @@
 # @sweberdev/inverse
 
+## 0.4.0
+
+### Minor Changes
+
+- be55ce3: - `dedupe` option for the handler: an identical declaration sent again within the window gets the first result instead of a second record and a second receipt.
+
 ## 0.3.0
 
 ### Minor Changes
