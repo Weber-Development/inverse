@@ -26,9 +26,18 @@ npx inverse-audit --sites sites.txt --html-dir reports/
 | `--no-sitemap` | crawl links instead of reading the sitemap |
 | `--include`, `--exclude` | regular expressions for paths |
 | `--html`, `--json` | report files |
+| `--csv` | one row per site with verdict, page counts and button targets, for spreadsheets |
 | `--sites`, `--html-dir` | many sites, one report each |
 | `--warn-ok` | exit 0 on warnings |
 | `--baseline` | compare with an earlier `--json` report; exits 1 only if something got worse |
+
+## Reports for clients
+
+The HTML report has a print stylesheet: open it in a browser and choose *Print → Save as PDF* for an A4 report you can attach to an offer or an invoice. For many sites, `--csv` writes one row per site, which fits a spreadsheet that tracks all clients:
+
+```sh
+npx inverse-audit --sites sites.txt --html-dir reports/ --csv overview.csv
+```
 
 ## Monitoring changes
 
@@ -48,7 +57,7 @@ With `--baseline` the exit code only reflects regressions, so the job stays gree
 ## In code
 
 ```ts
-import { auditSite, compareReports, renderHtmlReport } from "@weber-development/inverse-audit";
+import { auditSite, compareReports, renderCsvReport, renderHtmlReport } from "@weber-development/inverse-audit";
 
 const report = await auditSite("https://shop.example.com", { kinds: ["withdrawal"], maxPages: 100 });
 report.verdict; // "pass" | "warn" | "fail"

@@ -17,7 +17,18 @@ import { createInverseHandler, type HandlerOptions } from "@sweberdev/inverse";
 | `timeZone` | IANA zone | dates in receipts, default `Europe/Berlin` |
 | `resolveEndDate` | `(record) => string \| undefined` | cancellation: end date for the receipt |
 | `onError` | `(error, record?) => void` | default `console.error` |
+| `dedupe` | `{ windowMs? }` | answer an identical declaration sent again within the window (default 10 minutes) with the first result instead of storing and mailing it twice; off by default |
 | `rateLimit` | `{ max, windowMs?, key? }` | limit requests per client, answers 429 with `retry-after`; off by default |
+
+## Duplicates
+
+People click twice, reload the confirmation page or retry on a slow connection. With `dedupe` the handler answers an identical declaration (same kind, same data, e-mail compared case-insensitively) with the first result, so you store one record and send one receipt:
+
+```ts
+createInverseHandler({ ...options, dedupe: { windowMs: 10 * 60_000 } });
+```
+
+Like the rate limit it lives in memory per server instance. If you run several instances, also check for duplicates in `onDeclaration`, for example with a unique index on e-mail, contract and day.
 
 ## Rate limit
 

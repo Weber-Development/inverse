@@ -38,6 +38,12 @@ export interface HandlerOptions {
    * once `max` requests arrived within `windowMs`. Off by default.
    */
   rateLimit?: RateLimitOptions;
+  /**
+   * Treat an identical declaration (same kind and data) arriving again within `windowMs` as
+   * the same one: answer with the first result instead of storing and mailing it twice.
+   * Kept in memory per server instance. Off by default.
+   */
+  dedupe?: { windowMs?: number };
 }
 
 export interface RateLimitOptions {
@@ -178,6 +184,7 @@ export function createInverseHandler(
   options: HandlerOptions,
 ): (request: Request) => Promise<Response> {
   const limited = options.rateLimit ? createRateLimiter(options.rateLimit) : undefined;
+  const seen = options.dedupe ? createDedupe(options.dedupe.windowMs ?? 10 * 60_000) : undefined;
   return async (request) => {
     if (request.method !== "POST") {
       return Response.json({ ok: false, error: "method" } satisfies HandlerFailure, {
@@ -192,7 +199,11 @@ export function createInverseHandler(
         headers: { "retry-after": String(retryAfter), "cache-control": "no-store" },
       });
     }
-    const result = await handleDeclaration(await readBody(request), options);
+    const body = await readBody(request);
+    const key = seen?.key(body);
+    const earlier = key ? seen?.get(key) : undefined;
+    const result = earlier ?? (await handleDeclaration(body, options));
+    if (key && result.ok && !earlier && result.id !== "-") seen?.set(key, result);
     return Response.json(result, {
       status: result.ok ? 200 : STATUS[result.error],
       headers: { "cache-control": "no-store" },
@@ -223,5 +234,34 @@ function createRateLimiter(options: RateLimitOptions): (request: Request) => num
     }
     entry.count++;
     return entry.count > options.max ? Math.ceil((entry.reset - now) / 1000) : undefined;
+  };
+}
+
+/** Remembers successful results by declaration content for a while. */
+function createDedupe(windowMs: number) {
+  const results = new Map<string, { result: HandlerSuccess; until: number }>();
+  return {
+    key(body: Record<string, unknown>): string | undefined {
+      const kind = body.kind as DeclarationKind;
+      const r = validate(kind, body.data ?? body);
+      if (!r.ok) return undefined;
+      const value = { ...r.value } as Record<string, unknown>;
+      if (typeof value.email === "string") value.email = value.email.toLowerCase();
+      return `${kind}:${JSON.stringify(value, Object.keys(value).sort())}`;
+    },
+    get(key: string): HandlerSuccess | undefined {
+      const hit = results.get(key);
+      if (!hit) return undefined;
+      if (hit.until > Date.now()) return hit.result;
+      results.delete(key);
+      return undefined;
+    },
+    set(key: string, result: HandlerSuccess) {
+      const now = Date.now();
+      if (results.size > 10_000) {
+        for (const [k, v] of results) if (v.until <= now) results.delete(k);
+      }
+      results.set(key, { result, until: now + windowMs });
+    },
   };
 }
