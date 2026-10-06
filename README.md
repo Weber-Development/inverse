@@ -28,16 +28,23 @@ export const POST = createInverseHandler({
 
 | Package | |
 |---|---|
-| [`@sweberdev/inverse`](packages/core) | Validation, records, receipts, deadlines, handler, `inverse check` CLI |
+| [`@sweberdev/inverse`](packages/core) | Validation, records, receipts, deadlines, handler, `inverse check` CLI, framework-free forms (`/ui` and a `<script>` build) |
 | [`@sweberdev/inverse-react`](packages/react) | `<InverseLink>`, `<WithdrawalForm>`, `<CancellationForm>`, `useDeclarationFlow` |
 
 - Statutory labels and two-step flows for withdrawal and cancellation
-- Acknowledgement of receipt with content, date and time, in German, English, French and Italian
+- Acknowledgement of receipt with content, date and time, in German, English, French, Italian, Dutch, Spanish and Polish (the three newest: have them reviewed before production)
 - Downloadable copy of the declaration (§ 312k Abs. 4 BGB)
 - Withdrawal deadline and contract end date helpers (§§ 187, 188, 193 BGB)
 - `Request → Response` handler for Next.js, Remix, Hono, SvelteKit and Astro, plus `createNodeHandler` for Express, Fastify and the Pages Router
 - Optional rate limit against scripted submissions
 - Contract select for signed-in customers in the React forms
+- No React? `mountDeclarationForm()` from `@sweberdev/inverse/ui`, or one `<script>` tag for WordPress, Shopify and static sites:
+
+```html
+<div data-inverse-form="withdrawal" data-endpoint="https://shop.example.com/api/inverse"></div>
+<script src="https://cdn.jsdelivr.net/npm/@sweberdev/inverse@0.3/dist/inverse.global.js" defer></script>
+```
+
 - `inverse check <url>`: finds missing or mislabelled buttons, exit code for CI
 - No backend, no tracking: you store the data and send the e-mail
 

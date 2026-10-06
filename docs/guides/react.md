@@ -24,7 +24,7 @@ Pass `children` only if you are sure the wording is equivalent. The statutory wo
 | Prop | |
 |---|---|
 | `endpoint` | URL of your `createInverseHandler` route |
-| `locale` | `de` (default), `en`, `fr`, `it` |
+| `locale` | `de` (default), `en`, `fr`, `it`, `nl`, `es`, `pl` |
 | `defaultValues` | prefill `name`, `email`, `contractRef` and others |
 | `contracts` | `{ value, label }[]` of a signed-in customer: a select instead of the free-text contract field |
 | `showItems` | withdrawal: field for a partial withdrawal |
@@ -65,6 +65,8 @@ The components are unstyled. Every element has a class:
 ```
 
 The root has `data-kind` and `data-step` (`form`, `review`, `sending`, `done`).
+
+Not using React? The same flow is available as [plain JavaScript and a script tag](/inverse/docs/guides/plain-html).
 
 ## Your own UI
 

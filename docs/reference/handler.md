@@ -13,7 +13,7 @@ import { createInverseHandler, type HandlerOptions } from "@sweberdev/inverse";
 | `onDeclaration` | `(record) => void \| Promise<void>` | store the declaration; if it throws, the consumer sees an error and can retry |
 | `sendReceipt` | `(receipt, record) => void \| Promise<void>` | send the e-mail; errors go to `onError`, the consumer still gets the copy |
 | `kinds` | `("withdrawal" \| "cancellation")[]` | default both |
-| `locale` | `"de" \| "en" \| "fr" \| "it"` | fallback if the request sends none |
+| `locale` | `"de" \| "en" \| "fr" \| "it" \| "nl" \| "es" \| "pl"` | fallback if the request sends none |
 | `timeZone` | IANA zone | dates in receipts, default `Europe/Berlin` |
 | `resolveEndDate` | `(record) => string \| undefined` | cancellation: end date for the receipt |
 | `onError` | `(error, record?) => void` | default `console.error` |
@@ -46,7 +46,7 @@ interface DeclarationRecord {
   id: string;            // "W-7K3QX9PD" or "K-…"
   kind: "withdrawal" | "cancellation";
   receivedAt: string;    // ISO 8601, server time
-  locale: "de" | "en" | "fr" | "it";
+  locale: "de" | "en" | "fr" | "it" | "nl" | "es" | "pl";
   data: WithdrawalInput | CancellationInput;
   endsAt?: string;       // cancellation, YYYY-MM-DD
 }

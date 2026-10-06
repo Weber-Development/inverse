@@ -25,8 +25,47 @@ export const POST = createInverseHandler(
 ## Stores
 
 - `fileStore(path)`: one JSON line per entry. Good for a VPS or a mounted volume.
+- `postgresStore({ query })`: PostgreSQL, Neon, Supabase, PGlite. The right choice on serverless platforms such as Vercel, which have no persistent disk.
+- `sqliteStore({ query })`: SQLite through `node:sqlite`, better-sqlite3 or `bun:sqlite`.
 - `memoryStore()`: for tests.
-- Your own: implement `{ read(): Promise<LedgerEntry[]>; append(entry): Promise<void>; replace(entries): Promise<void> }` for Postgres, S3 or anything else. Serverless platforms such as Vercel have no persistent disk, so use your database there.
+- Your own: implement `{ read(): Promise<LedgerEntry[]>; append(entry): Promise<void>; replace(entries): Promise<void> }`, optionally `last()` and `find(ref)`, for S3 or anything else.
+
+## PostgreSQL and SQLite
+
+The SQL stores take a `query(sql, params)` function that returns rows, so they work with any driver and add no dependency. Two adapters cover the common drivers:
+
+```ts
+import { createLedger, pgQuery, postgresStore } from "@weber-development/inverse-ledger";
+import pg from "pg";
+
+const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+const ledger = createLedger({ store: postgresStore({ query: pgQuery(pool) }) });
+```
+
+```ts
+import { createLedger, sqliteQuery, sqliteStore } from "@weber-development/inverse-ledger";
+import { DatabaseSync } from "node:sqlite"; // or: new Database(path) from better-sqlite3
+
+const ledger = createLedger({
+  store: sqliteStore({ query: sqliteQuery(new DatabaseSync("./data/inverse.db")) }),
+});
+```
+
+`pgQuery` accepts anything with `query(text, values) → { rows }` (pg `Pool` or `Client`, `@neondatabase/serverless`, PGlite); `sqliteQuery` anything with a synchronous `prepare(sql)`. For other drivers write the function yourself, e.g. for postgres.js: `query: (text, params) => sql.unsafe(text, params)`.
+
+| Option | |
+|---|---|
+| `query` | `(sql, params) => rows` (sync or async) |
+| `table` | table name, optionally with schema; default `inverse_ledger` |
+| `migrate` | create the table and an index on `ref` on first use; default `true`. With `false`, run `await store.migrate()` or the SQL in `store.schema` once yourself |
+
+The table has one row per entry (`seq` primary key, `at`, `type`, `ref`, `payload` as JSON text, `payload_hash`, `prev`, `hash`):
+
+- **Append-only.** The store only ever inserts rows. `replace`, which the ledger uses for erasure, may only clear payloads; any other change is refused. For extra safety, give the application's database user only `SELECT`, `INSERT` and `UPDATE (payload)` on the table.
+- **No forks.** `seq` is the primary key. If two server instances append at the same moment, one insert fails and the declaration request returns an error the consumer can retry; the chain stays linear.
+- **Fast appends.** The store reads the last entry and the entries of one declaration with indexed queries instead of the whole chain.
+
+Verification, evidence sheets, `redact` and `retain` work exactly as with the file store. The `inverse-ledger` CLI reads JSON Lines files; for a database, call `ledger.verify()`, `ledger.evidence(ref)` and `ledger.retain()` from a script or a scheduled job.
 
 ## Verify
 

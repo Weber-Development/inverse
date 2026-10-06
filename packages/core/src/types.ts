@@ -2,7 +2,7 @@
 export type DeclarationKind = "withdrawal" | "cancellation";
 
 /** Supported languages for labels, errors and receipts. */
-export type Locale = "de" | "en" | "fr" | "it";
+export type Locale = "de" | "en" | "fr" | "it" | "nl" | "es" | "pl";
 
 /** `ordinary` = ordentliche Kündigung, `extraordinary` = ausserordentliche Kündigung. */
 export type CancellationType = "ordinary" | "extraordinary";

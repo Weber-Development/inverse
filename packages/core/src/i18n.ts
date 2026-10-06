@@ -312,7 +312,197 @@ const it: Messages = {
   },
 };
 
-export const messages: Record<Locale, Messages> = { de, en, fr, it };
+// Dutch, Spanish and Polish: the withdrawal labels are the wording of Article 11a of
+// Directive 2011/83/EU (as amended by Directive (EU) 2023/2673) in that language version.
+// All other texts are translations; have them reviewed before production use.
+
+const nl: Messages = {
+  withdrawal: {
+    button: "Hier de overeenkomst herroepen",
+    confirm: "Herroeping bevestigen",
+    title: "Overeenkomst herroepen",
+    intro:
+      "Met dit formulier kunt u uw overeenkomst binnen de herroepingstermijn herroepen. U ontvangt direct een ontvangstbevestiging per e-mail.",
+    reviewTitle: "Controleer uw gegevens",
+    doneTitle: "Wij hebben uw herroeping ontvangen",
+    doneText: "Er is een ontvangstbevestiging verzonden naar {email}.",
+  },
+  cancellation: {
+    button: "Overeenkomsten hier opzeggen",
+    confirm: "Nu opzeggen",
+    title: "Overeenkomst opzeggen",
+    intro:
+      "Met dit formulier kunt u uw overeenkomst opzeggen zonder in te loggen. U ontvangt direct een ontvangstbevestiging per e-mail.",
+    reviewTitle: "Controleer uw opzegging",
+    doneTitle: "Wij hebben uw opzegging ontvangen",
+    doneText: "Er is een ontvangstbevestiging verzonden naar {email}.",
+  },
+  fields: {
+    name: "Voor- en achternaam",
+    email: "E-mailadres voor de bevestiging",
+    contractRef: "Bestel- of contractnummer",
+    items: "Alleen deze artikelen of onderdelen (optioneel)",
+    message: "Bericht (optioneel)",
+    cancellationType: "Soort opzegging",
+    ordinary: "Gewone opzegging",
+    extraordinary: "Buitengewone opzegging (zonder opzegtermijn)",
+    reason: "Reden van de opzegging",
+    effectiveDate: "Opzeggen per",
+    earliest: "Eerst mogelijke datum",
+  },
+  actions: {
+    next: "Verder",
+    back: "Terug",
+    download: "Bevestiging downloaden",
+  },
+  errors: {
+    required: "Vul dit veld in.",
+    email: "Vul een geldig e-mailadres in.",
+    too_long: "Deze tekst is te lang.",
+    date: "Vul een geldige datum in.",
+    type: "Ongeldige keuze.",
+    network: "De verklaring kon niet worden verzonden. Probeer het opnieuw.",
+  },
+  receipt: {
+    withdrawalSubject: "Ontvangstbevestiging van uw herroeping ({id})",
+    cancellationSubject: "Ontvangstbevestiging van uw opzegging ({id})",
+    greeting: "Beste {name}",
+    withdrawalBody: "wij bevestigen de ontvangst van uw herroeping met de volgende inhoud:",
+    cancellationBody: "wij bevestigen de ontvangst van uw opzegging met de volgende inhoud:",
+    receivedAt: "Ontvangen op",
+    reference: "Referentie",
+    content: "Inhoud van de verklaring",
+    endsAt: "De overeenkomst eindigt op",
+    endsAtUnknown: "Wij laten u apart weten wanneer de overeenkomst eindigt.",
+    footer: "Deze bevestiging is automatisch aangemaakt. Bewaar haar goed.",
+  },
+};
+
+const es: Messages = {
+  withdrawal: {
+    button: "Desistir del contrato aquí",
+    confirm: "Confirmar desistimiento",
+    title: "Desistir del contrato",
+    intro:
+      "Con este formulario puede desistir de su contrato dentro del plazo de desistimiento. Recibirá de inmediato un acuse de recibo por correo electrónico.",
+    reviewTitle: "Compruebe sus datos",
+    doneTitle: "Hemos recibido su desistimiento",
+    doneText: "Se ha enviado un acuse de recibo a {email}.",
+  },
+  cancellation: {
+    button: "Cancelar contratos aquí",
+    confirm: "Cancelar ahora",
+    title: "Cancelar el contrato",
+    intro:
+      "Con este formulario puede cancelar su contrato sin iniciar sesión. Recibirá de inmediato un acuse de recibo por correo electrónico.",
+    reviewTitle: "Compruebe su cancelación",
+    doneTitle: "Hemos recibido su cancelación",
+    doneText: "Se ha enviado un acuse de recibo a {email}.",
+  },
+  fields: {
+    name: "Nombre y apellidos",
+    email: "Correo electrónico para la confirmación",
+    contractRef: "Número de pedido o de contrato",
+    items: "Solo estos artículos o partes (opcional)",
+    message: "Mensaje (opcional)",
+    cancellationType: "Tipo de cancelación",
+    ordinary: "Cancelación ordinaria",
+    extraordinary: "Cancelación extraordinaria (sin preaviso)",
+    reason: "Motivo de la cancelación",
+    effectiveDate: "Cancelar con fecha",
+    earliest: "Lo antes posible",
+  },
+  actions: {
+    next: "Continuar",
+    back: "Volver",
+    download: "Descargar la confirmación",
+  },
+  errors: {
+    required: "Rellene este campo.",
+    email: "Introduzca una dirección de correo electrónico válida.",
+    too_long: "Este texto es demasiado largo.",
+    date: "Introduzca una fecha válida.",
+    type: "Opción no válida.",
+    network: "No se ha podido enviar la declaración. Inténtelo de nuevo.",
+  },
+  receipt: {
+    withdrawalSubject: "Acuse de recibo de su desistimiento ({id})",
+    cancellationSubject: "Acuse de recibo de su cancelación ({id})",
+    greeting: "Hola, {name}",
+    withdrawalBody: "confirmamos la recepción de su desistimiento con el siguiente contenido:",
+    cancellationBody: "confirmamos la recepción de su cancelación con el siguiente contenido:",
+    receivedAt: "Recibido el",
+    reference: "Referencia",
+    content: "Contenido de la declaración",
+    endsAt: "El contrato finaliza el",
+    endsAtUnknown: "Le comunicaremos por separado la fecha de finalización del contrato.",
+    footer: "Esta confirmación se ha generado automáticamente. Consérvela.",
+  },
+};
+
+const pl: Messages = {
+  withdrawal: {
+    button: "Odstąp od umowy tutaj",
+    confirm: "Potwierdź odstąpienie od umowy",
+    title: "Odstąpienie od umowy",
+    intro:
+      "Za pomocą tego formularza można odstąpić od umowy w terminie na odstąpienie. Potwierdzenie otrzymania zostanie od razu wysłane e-mailem.",
+    reviewTitle: "Sprawdź swoje dane",
+    doneTitle: "Otrzymaliśmy Twoje odstąpienie od umowy",
+    doneText: "Potwierdzenie otrzymania wysłaliśmy na adres {email}.",
+  },
+  cancellation: {
+    button: "Wypowiedz umowy tutaj",
+    confirm: "Wypowiedz teraz",
+    title: "Wypowiedzenie umowy",
+    intro:
+      "Za pomocą tego formularza można wypowiedzieć umowę bez logowania. Potwierdzenie otrzymania zostanie od razu wysłane e-mailem.",
+    reviewTitle: "Sprawdź swoje wypowiedzenie",
+    doneTitle: "Otrzymaliśmy Twoje wypowiedzenie",
+    doneText: "Potwierdzenie otrzymania wysłaliśmy na adres {email}.",
+  },
+  fields: {
+    name: "Imię i nazwisko",
+    email: "Adres e-mail do potwierdzenia",
+    contractRef: "Numer zamówienia lub umowy",
+    items: "Tylko te artykuły lub części (opcjonalnie)",
+    message: "Wiadomość (opcjonalnie)",
+    cancellationType: "Rodzaj wypowiedzenia",
+    ordinary: "Wypowiedzenie zwykłe",
+    extraordinary: "Wypowiedzenie nadzwyczajne (bez zachowania okresu wypowiedzenia)",
+    reason: "Przyczyna wypowiedzenia",
+    effectiveDate: "Wypowiedzenie ze skutkiem na dzień",
+    earliest: "Najwcześniejszy możliwy termin",
+  },
+  actions: {
+    next: "Dalej",
+    back: "Wstecz",
+    download: "Pobierz potwierdzenie",
+  },
+  errors: {
+    required: "Wypełnij to pole.",
+    email: "Podaj prawidłowy adres e-mail.",
+    too_long: "Ten tekst jest za długi.",
+    date: "Podaj prawidłową datę.",
+    type: "Nieprawidłowy wybór.",
+    network: "Nie udało się wysłać oświadczenia. Spróbuj ponownie.",
+  },
+  receipt: {
+    withdrawalSubject: "Potwierdzenie otrzymania odstąpienia od umowy ({id})",
+    cancellationSubject: "Potwierdzenie otrzymania wypowiedzenia ({id})",
+    greeting: "Dzień dobry {name}",
+    withdrawalBody: "potwierdzamy otrzymanie odstąpienia od umowy o następującej treści:",
+    cancellationBody: "potwierdzamy otrzymanie wypowiedzenia o następującej treści:",
+    receivedAt: "Data otrzymania",
+    reference: "Numer referencyjny",
+    content: "Treść oświadczenia",
+    endsAt: "Umowa kończy się",
+    endsAtUnknown: "O dacie zakończenia umowy poinformujemy oddzielnie.",
+    footer: "To potwierdzenie zostało utworzone automatycznie. Prosimy je zachować.",
+  },
+};
+
+export const messages: Record<Locale, Messages> = { de, en, fr, it, nl, es, pl };
 
 export const locales = Object.keys(messages) as Locale[];
 
