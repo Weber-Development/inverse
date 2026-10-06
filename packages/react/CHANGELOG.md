@@ -1,5 +1,16 @@
 # @sweberdev/inverse-react
 
+## 0.6.0
+
+### Minor Changes
+
+- ad042bf: Integrations for WooCommerce, Shopware, Shopify and WordPress: `inverse snippet <platform> --endpoint <url>` prints a ready-to-paste snippet, with a new guide.
+
+### Patch Changes
+
+- Updated dependencies [ad042bf]
+  - @sweberdev/inverse@0.6.0
+
 ## 0.5.0
 
 ### Minor Changes
