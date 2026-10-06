@@ -37,6 +37,7 @@ export const POST = createInverseHandler({
 - Withdrawal deadline and contract end date helpers (§§ 187, 188, 193 BGB)
 - `Request → Response` handler for Next.js, Remix, Hono, SvelteKit and Astro, plus `createNodeHandler` for Express, Fastify and the Pages Router
 - CORS option for shops on another domain, and a dated legal status (`inverse legal`)
+- Snippets for WooCommerce, Shopware, Shopify and WordPress (`inverse snippet`)
 - Optional rate limit against scripted submissions and duplicate protection against double clicks
 - Contract select for signed-in customers in the React forms
 - No React? `mountDeclarationForm()` from `@sweberdev/inverse/ui`, or one `<script>` tag for WordPress, Shopify and static sites:
