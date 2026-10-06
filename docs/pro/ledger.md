@@ -146,3 +146,15 @@ npx inverse-ledger dossier ./data/inverse.jsonl --kind cancellation   # JSON man
 ```
 
 `buildDossier(ledger, { from, to, kind, locale, company })` returns `{ html, manifest, manifestHash }`. The HTML is self-contained and printable; all values are escaped.
+
+## CLI on a database
+
+The CLI reads the ledger from wherever you keep it. Pass a SQLite file or a PostgreSQL URL instead of the JSON Lines file; every command works the same.
+
+```sh
+npx inverse-ledger verify ./data/inverse.db                       # SQLite, Node 22.5 or newer
+npx inverse-ledger dossier postgres://user@host/db --html d.html  # PostgreSQL, needs: pnpm add pg
+npx inverse-ledger evidence ./data/inverse.db W-7K3QX9PD --table my_ledger
+```
+
+A target ending in `.db`, `.sqlite` or `.sqlite3`, or starting with `sqlite:`, is SQLite; `postgres://` and `postgresql://` are PostgreSQL; anything else is a JSON Lines file. `--table` sets the table name (default `inverse_ledger`).
