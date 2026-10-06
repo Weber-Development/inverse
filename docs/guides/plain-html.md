@@ -3,7 +3,7 @@ title: Plain HTML, WordPress and Shopify
 description: The withdrawal and cancellation forms without React, from npm or with a script tag.
 ---
 
-The forms also work without React: on a static site, in a WordPress or Shopify theme, or in an app built with Vue, Svelte or plain JavaScript. They post to the same handler as the React components, so set up [`createInverseHandler`](/inverse/docs/reference/handler) on your server first. The endpoint has to be reachable from the page; for a different domain, answer CORS requests in your route.
+The forms also work without React: on a static site, in a WordPress or Shopify theme, or in an app built with Vue, Svelte or plain JavaScript. They post to the same handler as the React components, so set up [`createInverseHandler`](/inverse/docs/reference/handler) on your server first. The endpoint has to be reachable from the page; for a different domain, switch on the handler's `cors` option (below).
 
 ## Script tag
 
@@ -44,6 +44,21 @@ Add `data-manual` to the script tag to skip the automatic mount and call the API
   });
 </script>
 ```
+
+### Handler on another domain
+
+A WordPress or Shopify shop and your handler are usually on different origins, so the browser sends a preflight request first. Let the handler answer it:
+
+```ts
+createInverseHandler({
+  company,
+  onDeclaration,
+  sendReceipt,
+  cors: { origin: ["https://shop.example.com", "https://www.shop.example.com"] },
+});
+```
+
+Only the listed origins get the CORS headers; use `"*"` if the handler is public anyway. Combine it with `rateLimit` and `dedupe`.
 
 ### WordPress
 

@@ -118,3 +118,31 @@ npx inverse-ledger retain ./data/inverse.jsonl --days 1095
 
 How long you keep declarations is your decision; three years (the regular limitation period, § 195 BGB) is a common choice. The chain still verifies after a retention run.
 
+
+## Time stamp anchors
+
+A hash chain proves order, but whoever holds the file could rewrite all of it. Anchor the head with an RFC 3161 time stamp authority (TSA): it signs the head hash together with the time, so you can later prove the chain up to that point existed then and was not rewritten.
+
+```sh
+npx inverse-ledger anchor ./data/inverse.jsonl --tsa https://freetsa.org/tsr
+npx inverse-ledger anchors ./data/inverse.jsonl
+```
+
+```ts
+import { anchorHead, listAnchors } from "@weber-development/inverse-ledger";
+
+await anchorHead(ledger, { tsa: "https://freetsa.org/tsr" });
+```
+
+The TSA answer is stored as a ledger entry (`note`, ref `anchor`, field `response` in base64). Chain verification covers it like any entry; `anchors` also checks that each anchor still matches the entry before it. To verify the TSA signature, decode the response to a `.tsr` file, write the request digest and run `openssl ts -verify -in response.tsr -digest <head> -sha256 -CAfile tsa-ca.pem`. Which TSA you use, and whether its time stamps are qualified under eIDAS, is your decision.
+
+## Evidence dossier
+
+`dossier` collects what a lawyer or authority asks for in one document: chain status, head hash, every declaration in a date range (with whether personal data was already erased), the anchors, and a SHA-256 of the manifest.
+
+```sh
+npx inverse-ledger dossier ./data/inverse.jsonl --from 2026-06-19 --to 2026-12-31 --lang de --company "Example AG" --html dossier.html
+npx inverse-ledger dossier ./data/inverse.jsonl --kind cancellation   # JSON manifest
+```
+
+`buildDossier(ledger, { from, to, kind, locale, company })` returns `{ html, manifest, manifestHash }`. The HTML is self-contained and printable; all values are escaped.

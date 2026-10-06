@@ -44,6 +44,19 @@ export interface HandlerOptions {
    * Kept in memory per server instance. Off by default.
    */
   dedupe?: { windowMs?: number };
+  /**
+   * Allow the forms to post from another origin, for example a WordPress or Shopify shop
+   * with the script tag and the handler on your own server. Answers the preflight request
+   * and adds the CORS headers. Off by default.
+   */
+  cors?: CorsOptions;
+}
+
+export interface CorsOptions {
+  /** Allowed origin(s): `"*"`, one origin or a list. Requests from other origins get no CORS headers. */
+  origin: string | string[];
+  /** Cache the preflight answer for this many seconds. Defaults to 86400. */
+  maxAge?: number;
 }
 
 export interface RateLimitOptions {
@@ -186,17 +199,21 @@ export function createInverseHandler(
   const limited = options.rateLimit ? createRateLimiter(options.rateLimit) : undefined;
   const seen = options.dedupe ? createDedupe(options.dedupe.windowMs ?? 10 * 60_000) : undefined;
   return async (request) => {
+    const cors = corsHeaders(request, options.cors);
+    if (options.cors && request.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: cors });
+    }
     if (request.method !== "POST") {
       return Response.json({ ok: false, error: "method" } satisfies HandlerFailure, {
         status: 405,
-        headers: { allow: "POST" },
+        headers: { allow: "POST", ...cors },
       });
     }
     const retryAfter = limited?.(request);
     if (retryAfter) {
       return Response.json({ ok: false, error: "rate" } satisfies HandlerFailure, {
         status: 429,
-        headers: { "retry-after": String(retryAfter), "cache-control": "no-store" },
+        headers: { "retry-after": String(retryAfter), "cache-control": "no-store", ...cors },
       });
     }
     const body = await readBody(request);
@@ -206,9 +223,27 @@ export function createInverseHandler(
     if (key && result.ok && !earlier && result.id !== "-") seen?.set(key, result);
     return Response.json(result, {
       status: result.ok ? 200 : STATUS[result.error],
-      headers: { "cache-control": "no-store" },
+      headers: { "cache-control": "no-store", ...cors },
     });
   };
+}
+
+function corsHeaders(request: Request, cors: CorsOptions | undefined): Record<string, string> {
+  if (!cors) return {};
+  const origin = request.headers.get("origin");
+  const allowed = Array.isArray(cors.origin) ? cors.origin : [cors.origin];
+  const headers: Record<string, string> = { vary: "origin" };
+  if (allowed.includes("*")) {
+    headers["access-control-allow-origin"] = "*";
+  } else if (origin && allowed.includes(origin)) {
+    headers["access-control-allow-origin"] = origin;
+  } else {
+    return headers;
+  }
+  headers["access-control-allow-methods"] = "POST, OPTIONS";
+  headers["access-control-allow-headers"] = "content-type";
+  headers["access-control-max-age"] = String(cors.maxAge ?? 86_400);
+  return headers;
 }
 
 function clientKey(request: Request): string {

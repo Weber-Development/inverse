@@ -18,6 +18,7 @@ import { createInverseHandler, type HandlerOptions } from "@sweberdev/inverse";
 | `resolveEndDate` | `(record) => string \| undefined` | cancellation: end date for the receipt |
 | `onError` | `(error, record?) => void` | default `console.error` |
 | `dedupe` | `{ windowMs? }` | answer an identical declaration sent again within the window (default 10 minutes) with the first result instead of storing and mailing it twice; off by default |
+| `cors` | `{ origin, maxAge? }` | allow the forms to post from other origins and answer the preflight request; off by default |
 | `rateLimit` | `{ max, windowMs?, key? }` | limit requests per client, answers 429 with `retry-after`; off by default |
 
 ## Duplicates

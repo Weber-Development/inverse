@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { parseArgs } from "node:util";
 import { type CheckResult, checkHtml, checkUrl, type Verdict } from "./check";
+import { legalRevision } from "./legal";
 import type { DeclarationKind } from "./types";
 
 const HELP = `inverse check <url|file.html> [more ...] [options]
@@ -16,6 +17,9 @@ Options:
   -h, --help       show this help
 
 Exit codes: 0 all pass, 1 a check failed or warned, 2 usage error.
+
+inverse legal
+  prints the state of the law Inverse was checked against, and what changed since 0.1.
 `;
 
 const ICON: Record<Verdict, string> = { pass: "✔", warn: "!", fail: "✘" };
@@ -37,6 +41,13 @@ export async function main(argv: string[]): Promise<number> {
   const [command, ...rest] = argv;
   if (!command || command === "-h" || command === "--help") {
     process.stdout.write(HELP);
+    return 0;
+  }
+  if (command === "legal") {
+    const r = legalRevision;
+    process.stdout.write(
+      `Legal status checked on ${r.checkedOn}\n\nSources:\n${r.sources.map((x) => `  - ${x}`).join("\n")}\n\nChanges:\n${r.changes.map((c) => `  ${c.date}  ${c.version}  ${c.summary}`).join("\n")}\n`,
+    );
     return 0;
   }
   if (command !== "check") {

@@ -23,6 +23,7 @@ export {
   withdrawalStatus,
 } from "./deadline";
 export {
+  type CorsOptions,
   createInverseHandler,
   type HandlerFailure,
   type HandlerOptions,
@@ -41,6 +42,7 @@ export {
   type Messages,
   messages,
 } from "./i18n";
+export { type LegalRevision, legalRevision } from "./legal";
 export {
   createNodeHandler,
   type NodeRequest,

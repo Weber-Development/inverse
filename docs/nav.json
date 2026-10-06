@@ -17,7 +17,7 @@
     },
     {
       "label": "Reference",
-      "items": ["reference/legal", "reference/handler", "reference/api"]
+      "items": ["reference/legal", "reference/legal-status", "reference/handler", "reference/api"]
     },
     {
       "label": "Pro",
