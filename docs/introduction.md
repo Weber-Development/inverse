@@ -14,8 +14,9 @@ Inverse packages those details.
 
 ## What you get
 
-- **`@sweberdev/inverse`**: validation of the fields the law asks for, a server-side record with date and time of receipt, the acknowledgement e-mail in German, English, French and Italian, a downloadable copy, deadline helpers and a `Request → Response` handler for Next.js, Remix, Hono, SvelteKit or Astro.
+- **`@sweberdev/inverse`**: validation of the fields the law asks for, a server-side record with date and time of receipt, the acknowledgement e-mail in German, English, French, Italian, Dutch, Spanish and Polish, a downloadable copy, deadline helpers and a `Request → Response` handler for Next.js, Remix, Hono, SvelteKit or Astro.
 - **`@sweberdev/inverse-react`**: `<InverseLink>` with the statutory labels, `<WithdrawalForm>` and `<CancellationForm>` with the two steps and the receipt, and `useDeclarationFlow` for your own UI.
+- **`@sweberdev/inverse/ui`**: the same forms without React, also as a `<script>` tag for WordPress, Shopify themes and static sites.
 - **`inverse check`**: a CLI that loads a page like a logged-out visitor and reports whether the buttons are there and labelled correctly. Useful in CI.
 
 ## How it fits together

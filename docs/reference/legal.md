@@ -5,7 +5,9 @@ description: The rules behind the withdrawal and cancellation buttons, and what 
 
 ## Withdrawal button (§ 356a BGB)
 
-Introduced by the EU directive 2023/2673, which added Article 11a to the Consumer Rights Directive. It applies EU-wide from **19 June 2026**; Germany implemented it as § 356a BGB; Austria applies its rules from 1 October 2026. Labels in the directive's English, French and Italian versions are "withdraw from contract here", "se rétracter du contrat ici" and "recedere dal contratto qui", which Inverse uses for those locales.
+Introduced by the EU directive 2023/2673, which added Article 11a to the Consumer Rights Directive. It applies EU-wide from **19 June 2026**; Germany implemented it as § 356a BGB; Austria applies its rules from 1 October 2026. Labels in the directive's English, French, Italian, Dutch, Spanish and Polish versions are "withdraw from contract here", "se rétracter du contrat ici", "recedere dal contratto qui", "hier de overeenkomst herroepen", "desistir del contrato aquí" and "odstąp od umowy tutaj" (confirmation: "confirm withdrawal", "confirmer la rétractation", "confermare il recesso", "herroeping bevestigen", "confirmar desistimiento", "potwierdź odstąpienie od umowy"), which Inverse uses for those locales.
+
+> **Translations.** The Dutch, Spanish and Polish texts (form, errors, receipt) were added in 0.3. Only the two withdrawal labels are taken verbatim from the directive; everything else, including all cancellation texts, is a translation. Have them reviewed by a native speaker and, for the receipt, by a lawyer before you use them in production. You can replace any text with the `messages` option.
 
 1. Contracts concluded via an online interface need a withdrawal function labelled "Vertrag widerrufen" or with an equivalent, unambiguous wording.
 2. It must be available throughout the withdrawal period, prominently placed and easy to access.

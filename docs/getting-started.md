@@ -9,6 +9,8 @@ description: Add the withdrawal and cancellation buttons to a Next.js app in fou
 pnpm add @sweberdev/inverse @sweberdev/inverse-react
 ```
 
+No React on the page, or a WordPress or Shopify site? Install only `@sweberdev/inverse` for the route and use the forms from [Plain HTML](/inverse/docs/guides/plain-html) in steps 3 and 4.
+
 ## 2. Add the route
 
 The handler validates the declaration, sets the time of receipt on the server, calls your storage and sends the acknowledgement.

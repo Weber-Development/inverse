@@ -14,6 +14,9 @@ const INTL_LOCALE: Record<Locale, string> = {
   en: "en-GB",
   fr: "fr-FR",
   it: "it-IT",
+  nl: "nl-NL",
+  es: "es-ES",
+  pl: "pl-PL",
 };
 
 /** A short, readable, random reference such as `W-7K3QX9PD`. */

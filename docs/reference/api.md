@@ -32,9 +32,19 @@ description: All exports of @sweberdev/inverse.
 - `handleDeclaration(body, options)`: same logic, returns the result object
 - `HONEYPOT_FIELD`
 
+## Browser (`@sweberdev/inverse/ui`)
+
+Also available as `window.Inverse` from `dist/inverse.global.js`, see [Plain HTML](/inverse/docs/guides/plain-html).
+
+- `mountDeclarationForm(element, options)`, `mountWithdrawalForm(element, options)`, `mountCancellationForm(element, options)`: `{ flow, destroy() }`
+- `createDeclarationFlow(options)`: `{ getState(), subscribe(listener), setValue(key, value), errorFor(field), review(), back(), confirm(), messages }`
+- `createInverseLink({ kind, href, locale?, className? })`: `HTMLAnchorElement`
+- `autoMount(root?)`: mounts `[data-inverse-form]` and fills `[data-inverse-link]`
+
 ## Texts
 
 - `getMessages(locale, overrides?)`, `messages`, `locales`, `isLocale(value)`, `format(template, values)`
+- Locales: `de`, `en`, `fr`, `it`, `nl`, `es`, `pl`. The Dutch, Spanish and Polish texts are new in 0.3 and should be reviewed by a native speaker or a lawyer before production use; override single texts with `messages`.
 
 ## Page check
 

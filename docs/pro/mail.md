@@ -23,7 +23,7 @@ export const POST = createInverseHandler({ company, onDeclaration: save, sendRec
 
 ## Branded receipt
 
-The receipt keeps everything the law requires (content, date and time of receipt, end date) and adds your logo, colour and footer links. Texts in German, English, French and Italian, with the same overrides as the free package.
+The receipt keeps everything the law requires (content, date and time of receipt, end date) and adds your logo, colour and footer links. Texts in every language of the free package (German, English, French, Italian, Dutch, Spanish, Polish), with the same overrides.
 
 ## Team notification
 
