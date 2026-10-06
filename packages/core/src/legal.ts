@@ -15,6 +15,12 @@ export const legalRevision = {
   /** What changed in Inverse because of the law, newest first. */
   changes: [
     {
+      version: "0.6.0",
+      date: "2026-10-06",
+      summary:
+        "Integrations for WooCommerce, Shopware and Shopify (`inverse snippet`). No change in requirements.",
+    },
+    {
       version: "0.5.0",
       date: "2026-10-06",
       summary:

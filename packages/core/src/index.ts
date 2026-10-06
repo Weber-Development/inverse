@@ -60,6 +60,7 @@ export {
   formatDate,
   formatDateTime,
 } from "./record";
+export { type Platform, platforms, type SnippetOptions, snippet } from "./snippets";
 export type * from "./types";
 export {
   isValidIsoDate,

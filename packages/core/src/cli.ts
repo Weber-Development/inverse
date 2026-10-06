@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { parseArgs } from "node:util";
 import { type CheckResult, checkHtml, checkUrl, type Verdict } from "./check";
 import { legalRevision } from "./legal";
+import { type Platform, platforms, snippet } from "./snippets";
 import type { DeclarationKind } from "./types";
 
 const HELP = `inverse check <url|file.html> [more ...] [options]
@@ -17,6 +18,9 @@ Options:
   -h, --help       show this help
 
 Exit codes: 0 all pass, 1 a check failed or warned, 2 usage error.
+
+inverse snippet <platform> --endpoint <url>
+  prints a ready-to-paste integration: ${platforms.join(", ")}.
 
 inverse legal
   prints the state of the law Inverse was checked against, and what changed since 0.1.
@@ -48,6 +52,20 @@ export async function main(argv: string[]): Promise<number> {
     process.stdout.write(
       `Legal status checked on ${r.checkedOn}\n\nSources:\n${r.sources.map((x) => `  - ${x}`).join("\n")}\n\nChanges:\n${r.changes.map((c) => `  ${c.date}  ${c.version}  ${c.summary}`).join("\n")}\n`,
     );
+    return 0;
+  }
+  if (command === "snippet") {
+    const { values, positionals } = parseArgs({
+      args: rest,
+      allowPositionals: true,
+      options: { endpoint: { type: "string" } },
+    });
+    const platform = positionals[0] as Platform | undefined;
+    if (!platform || !platforms.includes(platform) || !values.endpoint) {
+      process.stderr.write(`Usage: inverse snippet <${platforms.join("|")}> --endpoint <url>\n`);
+      return 2;
+    }
+    process.stdout.write(snippet(platform, { endpoint: values.endpoint }));
     return 0;
   }
   if (command !== "check") {
