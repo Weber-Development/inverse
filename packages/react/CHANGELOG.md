@@ -1,5 +1,16 @@
 # @sweberdev/inverse-react
 
+## 0.7.0
+
+### Minor Changes
+
+- 3b54c0a: Example projects for the Next.js Pages Router, Remix, SvelteKit and Express in `examples/`.
+
+### Patch Changes
+
+- Updated dependencies [3b54c0a]
+  - @sweberdev/inverse@0.7.0
+
 ## 0.6.0
 
 ### Minor Changes

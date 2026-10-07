@@ -1,6 +1,6 @@
 {
   "name": "@sweberdev/inverse",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Withdrawal button (§ 356a BGB) and cancellation button (§ 312k BGB) for any web app: validation, server-side receipt with date and time, acknowledgement e-mail, deadlines and a page checker. Includes a framework-free form for plain HTML via a <script> tag.",
   "license": "MIT",
   "author": "Seya Weber (https://github.com/sxwxbxr)",
