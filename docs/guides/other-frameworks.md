@@ -36,6 +36,8 @@ export default createNodeHandler(options);
 
 `handleDeclaration(body, options)` stays available if you want to write the response yourself.
 
+Complete minimal projects for the Next.js Pages Router, Remix, SvelteKit and Express are in [`examples/`](https://github.com/Weber-Development/inverse/tree/main/examples).
+
 ## Without JavaScript
 
 The handler also accepts `application/x-www-form-urlencoded`, so a server-rendered form works. Send `kind`, the fields and, for items, repeat `items`. You are responsible for the review step: render the entered data with `declarationFields()` and a submit button labelled with `getMessages(locale).withdrawal.confirm`.

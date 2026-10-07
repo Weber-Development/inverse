@@ -15,6 +15,11 @@ export const legalRevision = {
   /** What changed in Inverse because of the law, newest first. */
   changes: [
     {
+      version: "0.7.0",
+      date: "2026-10-07",
+      summary: "Example projects added. No change in requirements.",
+    },
+    {
       version: "0.6.0",
       date: "2026-10-06",
       summary:

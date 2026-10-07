@@ -60,3 +60,19 @@ await transport.send({ from: "service@acme.de", to: "team@acme.de", ...digest })
 ## Transports
 
 `resend`, `postmark`, `sendgrid`, `brevo` and `mailgun` use the providers' HTTP APIs with `fetch`, no SDK needed. `nodemailer(transporter)` wraps an existing nodemailer transport for SMTP. Any object with `send({ from?, to, bcc?, replyTo?, subject, text, html })` works too.
+
+## Reminders per case
+
+The digest lists everything that is due once a week. `caseReminders` sends one message per case shortly before its deadline: the refund after a withdrawal (14 days after receipt, § 357 BGB) and the end of a contract after a cancellation. Run it daily from a cron job.
+
+```ts
+import { caseReminders } from "@weber-development/inverse-mail";
+
+const sent = new Set(await loadSentKeys());
+for (const r of caseReminders(records, { daysBefore: [3, 1, 0], sent })) {
+  await transport.send({ from: "service@acme.de", to: "team@acme.de", subject: r.subject, text: r.text, html: r.html });
+  await saveSentKey(r.key); // `<id>:<kind>:<daysLeft>`
+}
+```
+
+`daysBefore` defaults to three days, one day and the day itself. Keys you already sent are skipped, so a cron job that runs twice sends nothing twice. Overdue refunds are not repeated; they stay in the weekly digest. Texts are German by default, `locale: "en"` for English.
