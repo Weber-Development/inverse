@@ -15,6 +15,11 @@ export const legalRevision = {
   /** What changed in Inverse because of the law, newest first. */
   changes: [
     {
+      version: "0.8.0",
+      date: "2026-10-09",
+      summary: "WordPress plugin; forms checked with axe (WCAG rules). No change in requirements.",
+    },
+    {
       version: "0.7.0",
       date: "2026-10-07",
       summary: "Example projects added. No change in requirements.",
