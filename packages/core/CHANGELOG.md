@@ -1,5 +1,11 @@
 # @sweberdev/inverse
 
+## 0.8.0
+
+### Minor Changes
+
+- 953d42f: WordPress plugin with settings page and shortcodes (`wordpress/inverse-widerruf`), and axe accessibility tests for the links and both forms.
+
 ## 0.7.0
 
 ### Minor Changes
