@@ -192,3 +192,21 @@ const report = await tenants.verifyAll(); // [{ tenant, ok, entries, head }]
 ```
 
 Tenant ids may contain letters, digits, `_` and `-`; anything else is refused before it reaches a table name.
+
+## Ending a subscription at Stripe or Paddle
+
+A cancellation that your customer sent through Inverse still has to reach the payment provider. `cancelSubscription` ends the subscription there. It changes real subscriptions, so run it after a person has looked at the declaration, and log the result in the ledger.
+
+```ts
+import { cancelSubscription } from "@weber-development/inverse-ledger";
+
+const result = await cancelSubscription({
+  provider: "stripe", // or "paddle"
+  apiKey: process.env.STRIPE_SECRET_KEY,
+  subscriptionId: record.data.contractRef, // the id your form collects: "sub_..."
+  at: "period-end", // "now" ends it immediately; Stripe also takes endsOn: "2026-11-05"
+});
+await ledger.append("note", record.id, result); // never contains the key
+```
+
+Stripe: at period end sets `cancel_at_period_end`, a date sets `cancel_at`, `"now"` deletes the subscription. Paddle: `effective_from` is `next_billing_period` or `immediately`; `sandbox: true` uses the sandbox API. The calls follow the providers' documented endpoints; try them with test keys and a test subscription first, and keep to what your terms promise the customer about the end date. HTTP errors do not throw: check `result.ok`.

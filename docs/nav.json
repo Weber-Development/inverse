@@ -13,12 +13,20 @@
         "guides/plain-html",
         "guides/platforms",
         "guides/other-frameworks",
-        "guides/check"
+        "guides/check",
+        "guides/upgrading"
       ]
     },
     {
       "label": "Reference",
-      "items": ["reference/legal", "reference/legal-status", "reference/handler", "reference/api"]
+      "items": [
+        "reference/legal",
+        "reference/legal-status",
+        "reference/austria",
+        "reference/stability",
+        "reference/handler",
+        "reference/api"
+      ]
     },
     {
       "label": "Pro",
