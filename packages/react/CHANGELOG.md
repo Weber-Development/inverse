@@ -1,5 +1,16 @@
 # @sweberdev/inverse-react
 
+## 0.9.0
+
+### Minor Changes
+
+- e6c45de: Austria page, stability policy, upgrade guide, and tests that pin the public API.
+
+### Patch Changes
+
+- Updated dependencies [e6c45de]
+  - @sweberdev/inverse@0.9.0
+
 ## 0.8.0
 
 ### Minor Changes
