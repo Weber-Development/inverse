@@ -158,3 +158,37 @@ npx inverse-ledger evidence ./data/inverse.db W-7K3QX9PD --table my_ledger
 ```
 
 A target ending in `.db`, `.sqlite` or `.sqlite3`, or starting with `sqlite:`, is SQLite; `postgres://` and `postgresql://` are PostgreSQL; anything else is a JSON Lines file. `--table` sets the table name (default `inverse_ledger`).
+
+## Dossier as PDF
+
+`--pdf` writes the dossier as an A4 PDF next to or instead of the HTML. In code: `dossierPdf(await buildDossier(ledger), { locale: "de", company })` returns the bytes. The PDF is plain text in Helvetica (Latin-1 characters; others become `?`) and contains the same sections as the HTML.
+
+```sh
+npx inverse-ledger dossier ./data/inverse.db --from 2026-06-19 --pdf dossier.pdf --lang de
+```
+
+## Anchors on a schedule
+
+Run `anchor` from a daily cron job with `--if-due-hours`. It anchors only if there are entries newer than the last anchor and the last anchor is at least that many hours old; otherwise it prints "nothing to anchor yet" and exits with 0.
+
+```sh
+npx inverse-ledger anchor ./data/inverse.db --tsa https://freetsa.org/tsr --if-due-hours 24
+```
+
+In code: `anchorIfDue(ledger, { tsa, everyHours: 24 })` returns the new entry or `null`.
+
+## One ledger per client
+
+An agency that runs Inverse for many shops keeps each shop in its own hash chain, so a client can be verified, exported or erased on its own.
+
+```ts
+import { createTenantLedgers, postgresStore, tenantTable, pgQuery } from "@weber-development/inverse-ledger";
+
+const tenants = createTenantLedgers({
+  storeFor: (tenant) => postgresStore({ query: pgQuery(pool), table: tenantTable("inverse", tenant) }),
+});
+await tenants.get("shop-a").append("declaration", record.id, record);
+const report = await tenants.verifyAll(); // [{ tenant, ok, entries, head }]
+```
+
+Tenant ids may contain letters, digits, `_` and `-`; anything else is refused before it reaches a table name.
