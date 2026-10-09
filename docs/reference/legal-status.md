@@ -30,6 +30,7 @@ Use `legalRevision.checkedOn` to show the date in your own compliance documentat
 
 | Date | Version | What changed |
 |---|---|---|
+| 2026-10-09 | 1.0.0 | Stable release; public API frozen. Switzerland note added. No change in requirements. |
 | 2026-10-09 | 0.9.0 | Austria page added: what Inverse covers for Austria and what it does not claim. No change in requirements. |
 | 2026-10-09 | 0.8.0 | WordPress plugin; forms checked with axe (WCAG rules). No change in requirements. |
 | 2026-10-07 | 0.7.0 | Example projects added. No change in requirements. |

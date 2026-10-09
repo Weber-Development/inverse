@@ -25,7 +25,7 @@ Without React, in plain HTML, WordPress or Shopify:
 ```html
 <a data-inverse-link="withdrawal" href="/widerruf"></a>
 <div data-inverse-form="withdrawal" data-endpoint="/api/inverse"></div>
-<script src="https://cdn.jsdelivr.net/npm/@sweberdev/inverse@0.3/dist/inverse.global.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@sweberdev/inverse@1/dist/inverse.global.js" defer></script>
 ```
 
 or `import { mountDeclarationForm } from "@sweberdev/inverse/ui"`.

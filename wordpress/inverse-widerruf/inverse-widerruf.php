@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Inverse Widerruf und Kündigung
  * Description: Withdrawal button (§ 356a BGB) and cancellation button (§ 312k BGB) for WordPress and WooCommerce. Posts to your Inverse handler.
- * Version: 0.8.0
+ * Version: 1.0.0
  * License: MIT
  * Requires PHP: 7.4
  *
@@ -23,7 +23,7 @@ function inverse_wp_options(): array
         'endpoint' => '',
         'withdrawal_path' => '/widerruf',
         'cancellation_path' => '/kuendigen',
-        'version' => '0.8',
+        'version' => '1',
         'woocommerce_links' => '1',
     ]);
 }
@@ -94,7 +94,7 @@ add_action('admin_init', function () {
                 'endpoint' => isset($input['endpoint']) ? esc_url_raw($input['endpoint']) : '',
                 'withdrawal_path' => '/' . ltrim(sanitize_text_field($input['withdrawal_path'] ?? '/widerruf'), '/'),
                 'cancellation_path' => '/' . ltrim(sanitize_text_field($input['cancellation_path'] ?? '/kuendigen'), '/'),
-                'version' => preg_replace('/[^0-9.]/', '', $input['version'] ?? '0.8'),
+                'version' => preg_replace('/[^0-9.]/', '', $input['version'] ?? '1'),
                 'woocommerce_links' => !empty($input['woocommerce_links']) ? '1' : '0',
             ];
         },
