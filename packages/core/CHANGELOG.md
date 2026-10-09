@@ -1,5 +1,11 @@
 # @sweberdev/inverse
 
+## 1.0.0
+
+### Major Changes
+
+- 91a80f4: 1.0.0: stable release. The public API of 0.9 is frozen under semantic versioning (see the stability page); code that runs on 0.9 runs on 1.0 unchanged. The script-tag examples and snippets now pin `@1`.
+
 ## 0.9.0
 
 ### Minor Changes

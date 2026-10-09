@@ -1,6 +1,6 @@
 {
   "name": "@sweberdev/inverse-react",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "description": "React components for Inverse: the statutory links and the two-step withdrawal and cancellation forms with receipt download.",
   "license": "MIT",
   "author": "Seya Weber (https://github.com/sxwxbxr)",
