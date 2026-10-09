@@ -1,5 +1,11 @@
 # @sweberdev/inverse
 
+## 0.9.0
+
+### Minor Changes
+
+- e6c45de: Austria page, stability policy, upgrade guide, and tests that pin the public API.
+
 ## 0.8.0
 
 ### Minor Changes
