@@ -9,7 +9,7 @@ Most online shops run on a platform, not on React. For these, Inverse ships a sn
 npx @sweberdev/inverse snippet woocommerce --endpoint https://api.example.com/inverse
 ```
 
-Platforms: `woocommerce`, `shopware`, `shopify`, `wordpress`, `html`. The command prints the snippet with notes on where it goes. Pin the script version by editing the `@0.6` part of the URL.
+Platforms: `woocommerce`, `shopware`, `shopify`, `wordpress`, `html`. The command prints the snippet with notes on where it goes. Pin the script version by editing the `@1` part of the URL.
 
 ## What each snippet does
 

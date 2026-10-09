@@ -15,6 +15,12 @@ export const legalRevision = {
   /** What changed in Inverse because of the law, newest first. */
   changes: [
     {
+      version: "1.0.0",
+      date: "2026-10-09",
+      summary:
+        "Stable release; public API frozen. Switzerland note added. No change in requirements.",
+    },
+    {
       version: "0.9.0",
       date: "2026-10-09",
       summary:

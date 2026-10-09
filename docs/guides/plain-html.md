@@ -14,10 +14,10 @@ The forms also work without React: on a static site, in a WordPress or Shopify t
 <!-- on /widerruf -->
 <div data-inverse-form="withdrawal" data-endpoint="https://shop.example.com/api/inverse"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@sweberdev/inverse@0.3/dist/inverse.global.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@sweberdev/inverse@1/dist/inverse.global.js" defer></script>
 ```
 
-The script (about 10 kB gzipped, all languages included) mounts every element with `data-inverse-form` and fills every empty link with `data-inverse-link` once the page has loaded. The same file is on unpkg: `https://unpkg.com/@sweberdev/inverse@0.3/dist/inverse.global.js`. Pin an exact version (`@0.3.0`) and add an `integrity` hash if your content security policy asks for it, or copy the file to your own server.
+The script (about 10 kB gzipped, all languages included) mounts every element with `data-inverse-form` and fills every empty link with `data-inverse-link` once the page has loaded. The same file is on unpkg: `https://unpkg.com/@sweberdev/inverse@1/dist/inverse.global.js`. Pin an exact version (`@1.0.0`) and add an `integrity` hash if your content security policy asks for it, or copy the file to your own server.
 
 | Attribute | |
 |---|---|
@@ -34,7 +34,7 @@ Links with text of their own keep it; empty links get the statutory label in the
 Add `data-manual` to the script tag to skip the automatic mount and call the API yourself. Everything is on `window.Inverse`:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@sweberdev/inverse@0.3/dist/inverse.global.js" data-manual></script>
+<script src="https://cdn.jsdelivr.net/npm/@sweberdev/inverse@1/dist/inverse.global.js" data-manual></script>
 <script>
   Inverse.mountCancellationForm(document.getElementById("kuendigen"), {
     endpoint: "/api/inverse",

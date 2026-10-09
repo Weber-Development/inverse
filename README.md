@@ -46,7 +46,7 @@ export const POST = createInverseHandler({
 
 ```html
 <div data-inverse-form="withdrawal" data-endpoint="https://shop.example.com/api/inverse"></div>
-<script src="https://cdn.jsdelivr.net/npm/@sweberdev/inverse@0.3/dist/inverse.global.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@sweberdev/inverse@1/dist/inverse.global.js" defer></script>
 ```
 
 - `inverse check <url>`: finds missing or mislabelled buttons, exit code for CI
