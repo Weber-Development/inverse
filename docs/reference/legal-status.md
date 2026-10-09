@@ -30,6 +30,10 @@ Use `legalRevision.checkedOn` to show the date in your own compliance documentat
 
 | Date | Version | What changed |
 |---|---|---|
+| 2026-10-09 | 0.9.0 | Austria page added: what Inverse covers for Austria and what it does not claim. No change in requirements. |
+| 2026-10-09 | 0.8.0 | WordPress plugin; forms checked with axe (WCAG rules). No change in requirements. |
+| 2026-10-07 | 0.7.0 | Example projects added. No change in requirements. |
+| 2026-10-06 | 0.6.0 | Integrations for WooCommerce, Shopware and Shopify (`inverse snippet`). No change in requirements. |
 | 2026-10-06 | 0.5.0 | Revision record added. No change in requirements; Austria applies the withdrawal function from 1 October 2026 and uses the same labels. |
 | 2026-10-06 | 0.3.0 | Dutch, Spanish and Polish added; withdrawal labels taken verbatim from Article 11a of the directive. |
 | 2026-10-05 | 0.1.0 | Labels, two-step flow, receipt with date and time, downloadable copy and page check for § 356a and § 312k BGB. |

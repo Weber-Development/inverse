@@ -69,3 +69,7 @@ diff.regressions; // [{ scope: "page", kind: "cancellation", url, before: "pass"
 ```
 
 The report is available in German and English.
+
+## PDF report
+
+`--pdf report.pdf` writes the report as an A4 PDF without a browser (`--pdf-dir` with `--sites` writes one per site). It has the same content as the HTML report: verdict, button targets, pages, and your `--brand` in the header. The PDF is plain text in Helvetica; for a styled report that prints with colours, use the HTML report and *Print → Save as PDF*. In code: `renderPdfReport(report, { lang: "en", brand })` returns the bytes.
