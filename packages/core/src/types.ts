@@ -1,3 +1,5 @@
+import type { JurisdictionId } from "./jurisdiction";
+
 /** The two statutory flows Inverse covers. */
 export type DeclarationKind = "withdrawal" | "cancellation";
 
@@ -47,6 +49,10 @@ export interface DeclarationRecord<K extends DeclarationKind = DeclarationKind> 
   /** ISO 8601 timestamp of receipt, set by the server. */
   receivedAt: string;
   locale: Locale;
+  /** Legal area the declaration was taken under. */
+  jurisdiction: JurisdictionId;
+  /** Date (`YYYY-MM-DD`) the legal status of that area was last checked: the state of the texts and rules at receipt. */
+  legalCheckedOn: string;
   data: DeclarationInput<K>;
   /** Cancellation only: ISO date the contract ends, if you know it when confirming. */
   endsAt?: string;

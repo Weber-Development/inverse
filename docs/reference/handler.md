@@ -13,7 +13,9 @@ import { createInverseHandler, type HandlerOptions } from "@sweberdev/inverse";
 | `onDeclaration` | `(record) => void \| Promise<void>` | store the declaration; if it throws, the consumer sees an error and can retry |
 | `sendReceipt` | `(receipt, record) => void \| Promise<void>` | send the e-mail; errors go to `onError`, the consumer still gets the copy |
 | `kinds` | `("withdrawal" \| "cancellation")[]` | default both |
-| `locale` | `"de" \| "en" \| "fr" \| "it" \| "nl" \| "es" \| "pl"` | fallback if the request sends none |
+| `jurisdiction` | `"de" \| "at" \| "ch" \| "fr" \| "it" \| "es" \| "nl" \| "pl"` | legal area of the shop, default `de`; stored on every record, see [jurisdictions](/inverse/docs/reference/jurisdictions) |
+| `jurisdictions` | `JurisdictionId[]` | legal areas a request may pick with `jurisdiction` in its body (a shop that sells in several countries); others are ignored |
+| `locale` | `"de" \| "en" \| "fr" \| "it" \| "nl" \| "es" \| "pl"` | fallback if the request sends none; default is the language of the jurisdiction |
 | `timeZone` | IANA zone | dates in receipts, default `Europe/Berlin` |
 | `resolveEndDate` | `(record) => string \| undefined` | cancellation: end date for the receipt |
 | `onError` | `(error, record?) => void` | default `console.error` |
@@ -59,6 +61,8 @@ interface DeclarationRecord {
   kind: "withdrawal" | "cancellation";
   receivedAt: string;    // ISO 8601, server time
   locale: "de" | "en" | "fr" | "it" | "nl" | "es" | "pl";
+  jurisdiction: "de" | "at" | "ch" | "fr" | "it" | "es" | "nl" | "pl";
+  legalCheckedOn: string; // YYYY-MM-DD, legal status of that area at receipt
   data: WithdrawalInput | CancellationInput;
   endsAt?: string;       // cancellation, YYYY-MM-DD
 }

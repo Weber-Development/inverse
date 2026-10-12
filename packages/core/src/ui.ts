@@ -1,5 +1,6 @@
 import type { HandlerResult, HandlerSuccess } from "./handler";
 import { format, getMessages, isLocale, type MessageOverrides, type Messages } from "./i18n";
+import { isJurisdiction, type JurisdictionId } from "./jurisdiction";
 import { declarationFields } from "./record";
 import type {
   CancellationInput,
@@ -36,6 +37,11 @@ export interface FlowOptions {
   endpoint: string;
   /** Defaults to `de`. */
   locale?: Locale;
+  /**
+   * Legal area to send with the declaration. The handler honours it only if its
+   * `jurisdictions` option lists it; otherwise its own `jurisdiction` is used.
+   */
+  jurisdiction?: JurisdictionId;
   messages?: MessageOverrides;
   /** Prefill known values, e.g. the order number from a link in the order e-mail. */
   defaultValues?: Partial<Omit<FlowValues, "inverse_hp">>;
@@ -155,7 +161,13 @@ export function createDeclarationFlow(options: FlowOptions): DeclarationFlowCont
     async confirm() {
       if (!parsed || state.step !== "review") return;
       set({ step: "sending", failed: false });
-      const body = { kind, locale, data: parsed, [HONEYPOT]: state.values.inverse_hp };
+      const body = {
+        kind,
+        locale,
+        ...(options.jurisdiction ? { jurisdiction: options.jurisdiction } : {}),
+        data: parsed,
+        [HONEYPOT]: state.values.inverse_hp,
+      };
       try {
         const res: HandlerResult = submit
           ? await submit(body)
@@ -586,7 +598,7 @@ const isKind = (v: unknown): v is DeclarationKind => v === "withdrawal" || v ===
  * <a data-inverse-link="cancellation" href="/kuendigen"></a>
  * ```
  *
- * Form attributes: `data-endpoint` (required), `data-locale` (else the nearest `lang`),
+ * Form attributes: `data-endpoint` (required), `data-locale` (else the nearest `lang`), `data-jurisdiction`,
  * `data-show-items`, `data-show-message`, `data-contract-ref` (prefill),
  * `data-download-name`.
  */
@@ -610,6 +622,7 @@ export function autoMount(root: ParentNode = document): MountedFlow[] {
         kind,
         endpoint,
         locale: pageLocale(el),
+        jurisdiction: isJurisdiction(el.dataset.jurisdiction) ? el.dataset.jurisdiction : undefined,
         showItems: flag(el, "showItems"),
         showMessage: flag(el, "showMessage"),
         downloadName: el.dataset.downloadName,

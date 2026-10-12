@@ -14,7 +14,8 @@
         "guides/platforms",
         "guides/other-frameworks",
         "guides/check",
-        "guides/upgrading"
+        "guides/upgrading",
+        "migrating-to-2"
       ]
     },
     {
@@ -22,6 +23,7 @@
       "items": [
         "reference/legal",
         "reference/legal-status",
+        "reference/jurisdictions",
         "reference/austria",
         "reference/switzerland",
         "reference/stability",

@@ -1,0 +1,9 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "@sweberdev/inverse": "1.0.0",
+    "@sweberdev/inverse-react": "1.0.0"
+  },
+  "changesets": []
+}

@@ -1,6 +1,6 @@
 # Examples
 
-Minimal starting points; copy the files into a project of the same kind and adjust the company details, storage and mail sending. They are not built or tested here: the handler and the forms are, and the examples only wire them in the way the [guides](https://packages.sweber.dev/inverse/docs/guides/other-frameworks) describe.
+Minimal starting points; copy the files into a project of the same kind and adjust the company details, storage and mail sending. They are not built with each framework here. The handler, the browser flow and the wiring they share (a Node route, CORS for a shop on another domain, the form posting to it over real HTTP) are tested end to end in `packages/core/test/e2e.test.ts`; the examples only place that wiring in each framework the way the [guides](https://packages.sweber.dev/inverse/docs/guides/other-frameworks) describe.
 
 | Folder | Setup |
 |---|---|

@@ -1,4 +1,6 @@
 import { getMessages, type MessageOverrides } from "./i18n";
+import { isJurisdiction, type JurisdictionId } from "./jurisdiction";
+import { legalRevisions } from "./legal";
 import type {
   CancellationInput,
   Company,
@@ -31,6 +33,8 @@ export function createReference(kind: DeclarationKind): string {
 
 export interface CreateRecordOptions {
   locale?: Locale;
+  /** Legal area. Defaults to `de`. */
+  jurisdiction?: JurisdictionId;
   /** Defaults to the current time. Always set on the server, never from the request. */
   now?: Date;
   id?: string;
@@ -42,11 +46,15 @@ export function createRecord<K extends DeclarationKind>(
   data: DeclarationInput<K>,
   options: CreateRecordOptions = {},
 ): DeclarationRecord<K> {
+  const jurisdiction = options.jurisdiction ?? "de";
+  if (!isJurisdiction(jurisdiction)) throw new Error(`Unknown jurisdiction "${jurisdiction}".`);
   const record: DeclarationRecord<K> = {
     id: options.id ?? createReference(kind),
     kind,
     receivedAt: (options.now ?? new Date()).toISOString(),
     locale: options.locale ?? "de",
+    jurisdiction,
+    legalCheckedOn: legalRevisions[jurisdiction].checkedOn,
     data,
   };
   if (options.endsAt) record.endsAt = options.endsAt;
