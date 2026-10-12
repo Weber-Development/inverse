@@ -193,7 +193,7 @@ const report = await tenants.verifyAll(); // [{ tenant, ok, entries, head }]
 
 Tenant ids may contain letters, digits, `_` and `-`; anything else is refused before it reaches a table name.
 
-## Ending a subscription at Stripe or Paddle
+## Ending a subscription at Stripe, Paddle or Lemon Squeezy
 
 A cancellation that your customer sent through Inverse still has to reach the payment provider. `cancelSubscription` ends the subscription there. It changes real subscriptions, so run it after a person has looked at the declaration, and log the result in the ledger.
 
@@ -201,7 +201,7 @@ A cancellation that your customer sent through Inverse still has to reach the pa
 import { cancelSubscription } from "@weber-development/inverse-ledger";
 
 const result = await cancelSubscription({
-  provider: "stripe", // or "paddle"
+  provider: "stripe", // or "paddle" or "lemonsqueezy"
   apiKey: process.env.STRIPE_SECRET_KEY,
   subscriptionId: record.data.contractRef, // the id your form collects: "sub_..."
   at: "period-end", // "now" ends it immediately; Stripe also takes endsOn: "2026-11-05"
@@ -209,4 +209,38 @@ const result = await cancelSubscription({
 await ledger.append("note", record.id, result); // never contains the key
 ```
 
-Stripe: at period end sets `cancel_at_period_end`, a date sets `cancel_at`, `"now"` deletes the subscription. Paddle: `effective_from` is `next_billing_period` or `immediately`; `sandbox: true` uses the sandbox API. The calls follow the providers' documented endpoints; try them with test keys and a test subscription first, and keep to what your terms promise the customer about the end date. HTTP errors do not throw: check `result.ok`.
+Stripe: at period end sets `cancel_at_period_end`, a date sets `cancel_at`, `"now"` deletes the subscription. Paddle: `effective_from` is `next_billing_period` or `immediately`; `sandbox: true` uses the sandbox API. The calls follow the providers' documented endpoints; try them with test keys and a test subscription first, and keep to what your terms promise the customer about the end date. Lemon Squeezy: `DELETE /v1/subscriptions/{id}`, which ends the subscription at the end of the billing period; its API has no immediate or dated cancellation, so `at: "now"` and `endsOn` throw instead of silently doing something else. None of the three calls has been run against a live provider account by the authors: they are tested against recorded requests only. HTTP errors do not throw: check `result.ok`.
+
+## Cases: status, refund, history
+
+Every declaration is a case. `setCaseStatus` writes each change to the ledger as a `case` entry, so the history is part of the evidence chain and shows up in the evidence sheet.
+
+```ts
+import { getCase, listCases, setCaseStatus } from "@weber-development/inverse-ledger";
+
+await setCaseStatus(ledger, "W-7K3QX9PD", "processing", { note: "goods received", by: "ann@example.com" });
+await setCaseStatus(ledger, "W-7K3QX9PD", "refunded", { amount: "49.90", currency: "EUR" });
+
+const open = await listCases(ledger, { status: "open", kind: "withdrawal" });
+open[0]?.refundDue; // "YYYY-MM-DD": 14 days after receipt
+open[0]?.overdue; // true once the date has passed and the case is still open or processing
+```
+
+Statuses are `open`, `processing`, `refunded`, `rejected` and `closed`. Only forward moves are allowed (a refunded case can only be closed), and `refunded` needs an `amount`, so the evidence shows what was paid back. After an erasure the case counts as closed.
+
+```sh
+npx inverse-ledger cases ./data/inverse.db --status open
+npx inverse-ledger case ./data/inverse.db W-7K3QX9PD --set refunded --amount 49.90 --currency EUR
+```
+
+The case entries record what you tell the ledger; Inverse does not move money. The refund period of 14 days follows § 357 BGB and Article 13 of the directive; pass `refundDays` if your counsel says otherwise for a jurisdiction.
+
+## Storage format and `migrate` (2.0)
+
+From 2.0 every entry carries `v: 2`, and SQL tables have a `format` column. The field is metadata and not part of the hash, so chains written by 1.x verify unchanged and nothing is rewritten.
+
+```sh
+npx inverse-ledger migrate ./data/inverse.db
+```
+
+The command verifies the chain, adds the column to an old table, verifies again and fails if the head hash differs. Stores open the table with `migrate: true` by default and do the same on first use; if you turned it off, run the statements in `store.upgrade` once yourself. `verify` prints how many entries have each format.
