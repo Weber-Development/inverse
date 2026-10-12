@@ -21,7 +21,7 @@ const esc = (v: string) => v.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`)
 
 /** Returns the snippet for a platform, with usage notes as comments. */
 export function snippet(platform: Platform, options: SnippetOptions): string {
-  const v = options.version ?? "1";
+  const v = options.version ?? "2";
   const w = options.paths?.withdrawal ?? "/widerruf";
   const c = options.paths?.cancellation ?? "/kuendigen";
   const endpoint = esc(options.endpoint);
