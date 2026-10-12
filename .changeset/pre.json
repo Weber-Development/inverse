@@ -5,5 +5,7 @@
     "@sweberdev/inverse": "1.0.0",
     "@sweberdev/inverse-react": "1.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "inverse-2-0-0"
+  ]
 }
