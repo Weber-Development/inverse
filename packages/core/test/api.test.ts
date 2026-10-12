@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import * as api from "../src";
 
-// Public API of 1.x. Removing or renaming an export is a breaking change and needs a major
+// Public API of 2.x. Removing or renaming an export is a breaking change and needs a major
 // version; adding one is a minor change (add it to the list).
 const STABLE = [
   "HONEYPOT_FIELD",
@@ -20,12 +20,18 @@ const STABLE = [
   "format",
   "formatDate",
   "formatDateTime",
+  "getJurisdiction",
+  "getLegalRevision",
   "getMessages",
   "handleDeclaration",
+  "isJurisdiction",
   "isLocale",
   "isValidIsoDate",
   "isWithinWithdrawalPeriod",
-  "legalRevision",
+  "jurisdictionIds",
+  "jurisdictions",
+  "legalChangesSince",
+  "legalRevisions",
   "locales",
   "messages",
   "nextWorkingDay",

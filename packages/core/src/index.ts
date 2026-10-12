@@ -42,7 +42,22 @@ export {
   type Messages,
   messages,
 } from "./i18n";
-export { type LegalRevision, legalRevision } from "./legal";
+export {
+  getJurisdiction,
+  isJurisdiction,
+  type Jurisdiction,
+  type JurisdictionId,
+  jurisdictionIds,
+  jurisdictions,
+  type Verification,
+} from "./jurisdiction";
+export {
+  getLegalRevision,
+  type LegalChangesSince,
+  type LegalRevision,
+  legalChangesSince,
+  legalRevisions,
+} from "./legal";
 export {
   createNodeHandler,
   type NodeRequest,

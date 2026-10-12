@@ -1,7 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { parseArgs } from "node:util";
 import { type CheckResult, checkHtml, checkUrl, type Verdict } from "./check";
-import { legalRevision } from "./legal";
+import { isJurisdiction, jurisdictionIds, jurisdictions } from "./jurisdiction";
+import { getLegalRevision, legalChangesSince } from "./legal";
 import { type Platform, platforms, snippet } from "./snippets";
 import type { DeclarationKind } from "./types";
 
@@ -22,8 +23,10 @@ Exit codes: 0 all pass, 1 a check failed or warned, 2 usage error.
 inverse snippet <platform> --endpoint <url>
   prints a ready-to-paste integration: ${platforms.join(", ")}.
 
-inverse legal
-  prints the state of the law Inverse was checked against, and what changed since 0.1.
+inverse legal [--jurisdiction <id>] [--since <YYYY-MM-DD>]
+  prints the state of the law Inverse was checked against for one legal area (${jurisdictionIds.join(", ")};
+  default de), and what changed. With --since it prints only what is newer than that date and
+  exits 1 if there is anything, so a CI job or cron job notices a legal change.
 `;
 
 const ICON: Record<Verdict, string> = { pass: "✔", warn: "!", fail: "✘" };
@@ -48,9 +51,32 @@ export async function main(argv: string[]): Promise<number> {
     return 0;
   }
   if (command === "legal") {
-    const r = legalRevision;
+    const { values } = parseArgs({
+      args: rest,
+      options: { jurisdiction: { type: "string", default: "de" }, since: { type: "string" } },
+    });
+    const id = values.jurisdiction;
+    if (!isJurisdiction(id)) {
+      process.stderr.write(`Unknown jurisdiction "${id}". Known: ${jurisdictionIds.join(", ")}.\n`);
+      return 2;
+    }
+    const r = getLegalRevision(id);
+    const j = jurisdictions[id];
+    const header = `${j.country} (${id}): ${j.verification === "checked" ? "national provision checked" : j.verification === "directive" ? "directive only, national act not read" : "note only"}\n${j.note}\n`;
+    if (values.since) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(values.since)) {
+        process.stderr.write("--since must be YYYY-MM-DD.\n");
+        return 2;
+      }
+      const c = legalChangesSince(id, values.since);
+      const fresh = c.changes.length > 0 || c.rechecked;
+      process.stdout.write(
+        `${header}\n${fresh ? `Changes since ${values.since} (checked ${r.checkedOn}):\n${c.changes.map((x) => `  ${x.date}  ${x.version}  ${x.summary}`).join("\n") || "  (legal status re-checked, no new entries)"}` : `Nothing new since ${values.since}.`}\n`,
+      );
+      return fresh ? 1 : 0;
+    }
     process.stdout.write(
-      `Legal status checked on ${r.checkedOn}\n\nSources:\n${r.sources.map((x) => `  - ${x}`).join("\n")}\n\nChanges:\n${r.changes.map((c) => `  ${c.date}  ${c.version}  ${c.summary}`).join("\n")}\n`,
+      `${header}\nLegal status checked on ${r.checkedOn}\n\nSources:\n${r.sources.map((x) => `  - ${x}`).join("\n")}\n\nChanges:\n${r.changes.map((c) => `  ${c.date}  ${c.version}  ${c.summary}`).join("\n")}\n`,
     );
     return 0;
   }

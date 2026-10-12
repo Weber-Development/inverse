@@ -1,4 +1,5 @@
 import { isLocale } from "./i18n";
+import { getJurisdiction, isJurisdiction, type JurisdictionId } from "./jurisdiction";
 import { renderReceipt } from "./receipt";
 import { createRecord, declarationText } from "./record";
 import type {
@@ -16,7 +17,14 @@ export interface HandlerOptions {
   company: Company;
   /** Which flows this endpoint accepts. Defaults to both. */
   kinds?: DeclarationKind[];
-  /** Fallback language when the request does not send one. Defaults to `de`. */
+  /** Legal area of the shop. Defaults to `de`. Stored on every record. */
+  jurisdiction?: JurisdictionId;
+  /**
+   * Legal areas a request may pick with `jurisdiction` in its body, e.g. a shop that sells in
+   * several countries. Others are ignored and `jurisdiction` is used. Empty by default.
+   */
+  jurisdictions?: JurisdictionId[];
+  /** Fallback language when the request does not send one. Defaults to the language of the jurisdiction. */
   locale?: Locale;
   /** IANA time zone for dates in the receipt. Defaults to Europe/Berlin. */
   timeZone?: string;
@@ -124,7 +132,14 @@ export async function handleDeclaration(
   const kind = body.kind as DeclarationKind;
   if (!kinds.includes(kind)) return { ok: false, error: "kind" };
 
-  const locale = isLocale(body.locale) ? body.locale : (options.locale ?? "de");
+  const base = options.jurisdiction ?? "de";
+  const jurisdiction =
+    isJurisdiction(body.jurisdiction) && options.jurisdictions?.includes(body.jurisdiction)
+      ? body.jurisdiction
+      : base;
+  const locale = isLocale(body.locale)
+    ? body.locale
+    : (options.locale ?? getJurisdiction(jurisdiction).defaultLocale);
 
   // Bots fill every field. Pretend success so they move on, but store nothing.
   if (typeof body[HONEYPOT_FIELD] === "string" && body[HONEYPOT_FIELD] !== "") {
@@ -140,7 +155,7 @@ export async function handleDeclaration(
   const result = validate(kind, body.data ?? body);
   if (!result.ok) return { ok: false, error: "invalid", errors: result.errors };
 
-  const record = createRecord(kind, result.value, { locale }) as DeclarationRecord;
+  const record = createRecord(kind, result.value, { locale, jurisdiction }) as DeclarationRecord;
   const onError = options.onError ?? ((e: unknown) => console.error("[inverse]", e));
 
   try {

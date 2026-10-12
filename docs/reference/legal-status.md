@@ -6,18 +6,21 @@ description: The state of the law Inverse was last checked against, and what cha
 Inverse tracks the rules behind the two buttons. Each release states the date it was last checked against the sources, and every change that was made because of the law is listed here and in the changelog. Inverse Pro licence holders get the same updates through the Pro packages; if the rules or a ruling change something in the texts, the fix ships as a new version and a note in the release post.
 
 ```sh
-npx inverse legal
+npx inverse legal                          # Germany
+npx inverse legal --jurisdiction at
+npx inverse legal --since 2026-10-01       # exit 1 if the status is newer than that date
 ```
 
 ```ts
-import { legalRevision } from "@sweberdev/inverse";
+import { getLegalRevision } from "@sweberdev/inverse";
 
-legalRevision.checkedOn; // "2026-10-06"
-legalRevision.sources; // the directive and the BGB sections
-legalRevision.changes; // [{ version, date, summary }]
+const rev = getLegalRevision("de");
+rev.checkedOn; // "2026-10-12"
+rev.sources; // the directive and the BGB sections
+rev.changes; // [{ version, date, summary }]
 ```
 
-Use `legalRevision.checkedOn` to show the date in your own compliance documentation or to fail a CI job when the installed version is older than your policy allows.
+The status is kept per legal area; see [jurisdictions](/inverse/docs/reference/jurisdictions) for which areas rest on the national act and which on the directive only. Use `getLegalRevision(...).checkedOn` to show the date in your own compliance documentation or to fail a CI job when the installed version is older than your policy allows.
 
 ## Sources
 
@@ -30,6 +33,7 @@ Use `legalRevision.checkedOn` to show the date in your own compliance documentat
 
 | Date | Version | What changed |
 |---|---|---|
+| 2026-10-12 | 2.0.0 | Legal status is kept per legal area (`legalRevisions`, `getLegalRevision`). France, Italy, Spain, the Netherlands and Poland added on the basis of the directive only. No change in requirements. |
 | 2026-10-09 | 1.0.0 | Stable release; public API frozen. Switzerland note added. No change in requirements. |
 | 2026-10-09 | 0.9.0 | Austria page added: what Inverse covers for Austria and what it does not claim. No change in requirements. |
 | 2026-10-09 | 0.8.0 | WordPress plugin; forms checked with axe (WCAG rules). No change in requirements. |

@@ -9,7 +9,7 @@ description: All exports of @sweberdev/inverse.
 
 ## Records and receipts
 
-- `createRecord(kind, data, { locale?, now?, id?, endsAt? })`
+- `createRecord(kind, data, { locale?, jurisdiction?, now?, id?, endsAt? })`
 - `createReference(kind)`: random reference such as `W-7K3QX9PD`
 - `renderReceipt(record, { company, timeZone?, messages? })`: `{ to, subject, text, html }`
 - `declarationText(record, { company?, timeZone?, messages? })`: plain-text copy for the download
@@ -23,6 +23,12 @@ description: All exports of @sweberdev/inverse.
 - `withdrawalStatus({ start, at?, timeZone?, informed?, isHoliday? })`: `{ deadline, open, daysLeft }`
 - `contractEndDate({ received, notice, termEnd?, requested? })`
 - `addPeriod(date, { days?, weeks?, months? })`, `nextWorkingDay(date, isHoliday?)`, `toIsoDate(date, timeZone?)`
+
+## Jurisdictions and legal status
+
+- `jurisdictions`, `jurisdictionIds`, `getJurisdiction(id)`, `isJurisdiction(value)`: what Inverse knows about each legal area
+- `legalRevisions`, `getLegalRevision(id)`: the legal status per area (date, sources, changes)
+- `legalChangesSince(id, date)`: `{ changes, rechecked }` newer than a date
 
 ## Handler
 

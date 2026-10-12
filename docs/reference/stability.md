@@ -1,6 +1,6 @@
 ---
 title: Stability and versions
-description: What stays stable from 1.0, how deprecations work and how Inverse is versioned.
+description: What stays stable from 1.0 (and 2.0), how deprecations work and how Inverse is versioned.
 ---
 
 From 1.0.0 Inverse follows semantic versioning. This page says what the promise covers.
@@ -26,4 +26,4 @@ A feature that is going away is marked `@deprecated` in the types and in the rel
 
 The free packages share one version. The Pro packages (`inverse-ledger`, `inverse-audit`, `inverse-mail`) share another and work with every free version of the same major version. After you cancel Pro, the versions you received keep working; only updates and repository access end.
 
-See also [upgrading to 1.0](/inverse/docs/guides/upgrading).
+2.0 is the first major version. Its breaking changes are listed in [migrating to 2.0](/inverse/docs/migrating-to-2). Version 1.x gets security and bug fixes for 12 months after 2.0.0. See also [upgrading to 1.0](/inverse/docs/guides/upgrading).
