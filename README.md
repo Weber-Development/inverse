@@ -76,6 +76,8 @@ Need more than the free package? **Inverse Pro** adds:
 
 - Evidence ledger: declarations and receipts in a hash chain, with an evidence sheet per declaration
 - Site audit: checks every page for both buttons and writes a report for clients
+- Case inbox: web inbox for withdrawals and cancellations with status, refund day and reply templates (beta)
+- Monitoring: scheduled checks of your shop pages with an alert when a button goes missing (beta)
 - Mail: receipts in your branding, team notifications with the next due date, transports for common mail providers
 
 Subscriptions from CHF 19 per month, or a one-time lifetime licence. [See what is included](https://packages.sweber.dev/inverse?utm_source=npm&utm_medium=readme&utm_campaign=pro)

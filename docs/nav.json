@@ -33,7 +33,7 @@
     },
     {
       "label": "Pro",
-      "items": ["pro/overview", "pro/ledger", "pro/audit", "pro/mail"]
+      "items": ["pro/overview", "pro/ledger", "pro/inbox", "pro/audit", "pro/watch", "pro/mail"]
     }
   ]
 }

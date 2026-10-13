@@ -44,6 +44,17 @@ function print(result: CheckResult): string {
   return lines.join("\n");
 }
 
+/**
+ * One line on stderr after an interactive check. Silent when the output is piped, with
+ * `--json`, in CI, and when `INVERSE_NO_HINT` is set.
+ */
+function proHint(): void {
+  if (!process.stderr.isTTY || process.env.CI || process.env.INVERSE_NO_HINT) return;
+  process.stderr.write(
+    "\nInverse Pro watches your shop pages around the clock and gives you a case inbox: https://packages.sweber.dev/inverse?utm_source=cli (hide: INVERSE_NO_HINT=1)\n",
+  );
+}
+
 export async function main(argv: string[]): Promise<number> {
   const [command, ...rest] = argv;
   if (!command || command === "-h" || command === "--help") {
@@ -138,6 +149,8 @@ export async function main(argv: string[]): Promise<number> {
 
   if (values.json) process.stdout.write(`${JSON.stringify(results, null, 2)}\n`);
   else process.stdout.write(`${results.map(print).join("\n\n")}\n`);
+
+  if (!values.json) proHint();
 
   const bad = results.some(
     (r) => r.verdict === "fail" || (r.verdict === "warn" && !values["warn-ok"]),
