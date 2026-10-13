@@ -1,5 +1,12 @@
 # @sweberdev/inverse-react
 
+## 2.1.0
+
+### Patch Changes
+
+- Updated dependencies [5b917ff]
+  - @sweberdev/inverse@2.1.0
+
 ## 2.0.0
 
 ### Major Changes
