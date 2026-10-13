@@ -33,3 +33,14 @@ or `import { mountDeclarationForm } from "@sweberdev/inverse/ui"`.
 React components: [`@sweberdev/inverse-react`](https://www.npmjs.com/package/@sweberdev/inverse-react). Docs: [packages.sweber.dev/inverse/docs](https://packages.sweber.dev/inverse/docs).
 
 MIT. Inverse is software, not legal advice.
+
+<!-- pro-promo -->
+## Inverse Pro
+
+Need more than the free package? **Inverse Pro** adds:
+
+- Evidence ledger: declarations and receipts in a hash chain, with an evidence sheet per declaration
+- Site audit: checks every page for both buttons and writes a report for clients
+- Mail: receipts in your branding, team notifications with the next due date, transports for common mail providers
+
+Subscriptions from CHF 19 per month, or a one-time lifetime licence. [See what is included](https://packages.sweber.dev/inverse?utm_source=npm&utm_medium=readme&utm_campaign=pro)
