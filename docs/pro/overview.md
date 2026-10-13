@@ -8,6 +8,7 @@ Inverse Pro adds three packages to the free handler and components. They run on 
 | Package | What it does |
 |---|---|
 | [`inverse-ledger`](/inverse/docs/pro/ledger) | Stores every declaration and receipt in a hash-chained, tamper-evident log and exports an evidence sheet per declaration. |
+| [Inbox](/inverse/docs/pro/inbox) (in `inverse-ledger`, beta) | A web inbox for the cases: status, refund day, overdue marks and reply templates, without building an admin yourself. |
 | [`inverse-audit`](/inverse/docs/pro/audit) | Crawls a whole site from its sitemap, checks every page for both buttons, follows them to the form and checks it works without login. HTML report for clients, exit code for CI. |
 | [`inverse-mail`](/inverse/docs/pro/mail) | Receipts in your branding, a notification to your team with the next steps and their due dates, and transports for Resend, Postmark, SendGrid, Brevo, Mailgun and nodemailer. |
 
